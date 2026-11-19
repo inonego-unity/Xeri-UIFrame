@@ -12,5 +12,6 @@ using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("inonego.Xeri.UI.TEST.EDIT")]
 [assembly: InternalsVisibleTo("inonego.Xeri.UI.TEST.PLAY")]
+[assembly: InternalsVisibleTo("inonego.Xeri.UI.Editor")]
 [assembly: InternalsVisibleTo("inonego.Xeri.UI.URP")]
 [assembly: InternalsVisibleTo("inonego.Xeri.UI.HDRP")]

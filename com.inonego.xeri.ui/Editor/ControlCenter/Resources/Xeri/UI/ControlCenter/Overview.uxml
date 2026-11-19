@@ -1,0 +1,23 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+  <ui:VisualElement name="overview" class="xeri-cc__overview">
+    <ui:VisualElement class="xeri-cc__section xeri-cc__overview-card xeri-cc__overview-card--config">
+      <ui:VisualElement class="xeri-cc__section-header">
+        <ui:Label text="구성" class="xeri-cc__section-title"/>
+      </ui:VisualElement>
+      <ui:ScrollView class="xeri-cc__section-body">
+        <ui:VisualElement name="config-rows" class="xeri-cc__rows"/>
+      </ui:ScrollView>
+    </ui:VisualElement>
+    <ui:VisualElement class="xeri-cc__section xeri-cc__overview-card xeri-cc__overview-card--diagnostics">
+      <ui:VisualElement class="xeri-cc__section-header">
+        <ui:Label text="진단" class="xeri-cc__section-title"/>
+        <ui:VisualElement class="xeri-cc__fill"/>
+        <ui:Button name="overview-validate" text="검사" class="xeri-cc__header-button"/>
+        <ui:Button name="overview-open-diagnostics" text="진단 열기" class="xeri-cc__header-button"/>
+      </ui:VisualElement>
+      <ui:ScrollView class="xeri-cc__section-body">
+        <ui:VisualElement name="diagnostic-rows" class="xeri-cc__rows"/>
+      </ui:ScrollView>
+    </ui:VisualElement>
+  </ui:VisualElement>
+</ui:UXML>

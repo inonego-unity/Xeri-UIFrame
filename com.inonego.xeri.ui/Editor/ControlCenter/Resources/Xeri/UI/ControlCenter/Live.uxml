@@ -1,0 +1,28 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+  <uie:Toolbar class="xeri-cc__subbar">
+    <ui:Label name="live-summary" class="xeri-cc__subbar-caption"/>
+    <uie:ToolbarSpacer class="xeri-cc__fill"/>
+    <uie:ToolbarButton name="live-close-top" text="최상단 화면 닫기" class="xeri-cc__subbar-button"/>
+  </uie:Toolbar>
+  <ui:TwoPaneSplitView name="live-vertical" fixed-pane-index="1" fixed-pane-initial-dimension="170" orientation="Vertical" class="xeri-cc__split">
+    <ui:TwoPaneSplitView name="live-split" fixed-pane-index="0" fixed-pane-initial-dimension="300" orientation="Horizontal" class="xeri-cc__split">
+      <ui:VisualElement class="xeri-cc__list-pane">
+        <ui:ListView name="live-nodes" show-alternating-row-backgrounds="ContentOnly" fixed-item-height="30" selection-type="Single" class="xeri-cc__list"/>
+      </ui:VisualElement>
+      <ui:VisualElement class="xeri-cc__detail">
+        <ui:VisualElement class="xeri-cc__detail-header">
+          <ui:Label name="live-title" class="xeri-cc__detail-title"/>
+          <ui:Label name="live-meta" class="xeri-cc__detail-meta"/>
+        </ui:VisualElement>
+        <ui:ScrollView name="live-body" class="xeri-cc__detail-body"/>
+      </ui:VisualElement>
+    </ui:TwoPaneSplitView>
+    <ui:VisualElement class="xeri-cc__list-pane">
+      <uie:Toolbar class="xeri-cc__pane-toolbar">
+        <ui:Label text="최근 사건" class="xeri-cc__pane-caption"/>
+      </uie:Toolbar>
+      <ui:ListView name="live-events" show-alternating-row-backgrounds="ContentOnly" fixed-item-height="26" selection-type="None" class="xeri-cc__list"/>
+    </ui:VisualElement>
+  </ui:TwoPaneSplitView>
+  <ui:VisualElement name="live-empty" class="xeri-cc__empty-host"/>
+</ui:UXML>

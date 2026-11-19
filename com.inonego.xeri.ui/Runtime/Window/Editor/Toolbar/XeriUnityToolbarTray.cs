@@ -35,7 +35,7 @@ namespace inonego.Xeri.UI.Window.Editor
 
         private const string TRAY_ROOT_NAME = "xeri-unity-toolbar-tray";
         private const string TRAY_USS_CLASS = "xeri-tray--unity-toolbar";
-        private const string TRAY_USS_PATH = "XeriUI/Tray/XeriTrayUnityToolbar";
+        private const string TRAY_USS_PATH = "Xeri/UI/Tray/XeriTrayUnityToolbar";
 
         // ------------------------------------------------------------
         /// <summary>

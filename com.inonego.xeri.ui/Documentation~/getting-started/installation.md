@@ -49,8 +49,8 @@ UPM dependency 버전은 `package.json`이 기준입니다. DOTween은 이 파�
 
 ## Native UI 출력 통합(선택)
 
-일반 Native UI에는 별도 URP/HDRP 설치기가 필요하지 않습니다. FP16 출력이나 UI의 후처리 참여 시점을 변경하는 프로젝트에서만 `Tools > Xeri UI > URP/HDRP`의 **출력 설정 미리보기 → 출력 설정 적용**을 사용합니다.
+일반 Native UI에는 별도 URP/HDRP 설치기가 필요하지 않습니다. FP16 출력이나 UI의 후처리 참여 시점을 변경하는 프로젝트에서만 **Tools > Xeri UI > 관리 도구 열기**의 설정 > 렌더링에서 **미리보기 → 적용**을 사용합니다.
 
-**출력 설정 적용 해제**는 설치기가 소유한 변경을 현재 자산과 대조해 반환합니다. 카메라·컬러 버퍼·HDR 지원 조건, 미지원 환경의 Native fallback은 [Presentation 출력 정책](../core/presentation.md#native-ui-출력-정책)에 명시돼 있습니다.
+**제거**는 설치기가 소유한 변경을 현재 자산과 대조해 반환합니다. 카메라·컬러 버퍼·HDR 지원 조건, 미지원 환경의 Native fallback은 [Presentation 출력 정책](../core/presentation.md#native-ui-출력-정책)에 명시돼 있습니다.
 
 설치를 마쳤으면 [프로젝트 설정과 시작](setup.md)으로 이동합니다.

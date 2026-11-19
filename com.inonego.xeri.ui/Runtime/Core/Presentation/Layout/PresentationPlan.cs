@@ -1,6 +1,6 @@
 /* BLOCK_HEADER_BEGIN =======================================================================
 파일명 : PresentationPlan.cs
-수정일 : 2026-11-02
+수정일 : 2026-11-12
 
 # 설명
 PresentationLayout을 resolve한 immutable Layer와 placement snapshot을 보관한다.
@@ -57,11 +57,18 @@ namespace inonego.Xeri.UI
 
     internal sealed class PresentationPlan
     {
+
+    #region 데이터
+
         internal IReadOnlyList<PresentationPlanLayer> Layers { get; }
         internal IReadOnlyList<PresentationPlanPlacement> Placements { get; }
 
         private readonly Dictionary<string, PresentationPlanLayer> layersByID;
         private readonly Dictionary<string, PresentationPlanPlacement> placementsByID;
+
+    #endregion
+
+    #region 생성
 
         internal PresentationPlan
         (
@@ -85,6 +92,10 @@ namespace inonego.Xeri.UI
                 placementsByID.Add(placements[index].PresentationID, placements[index]);
             }
         }
+
+    #endregion
+
+    #region 조회
 
         internal bool TryGetLayer(string layerID, out PresentationPlanLayer layer)
         {
@@ -111,5 +122,8 @@ namespace inonego.Xeri.UI
 
             return placementsByID.TryGetValue(presentationID, out placement);
         }
+
+    #endregion
+
     }
 }

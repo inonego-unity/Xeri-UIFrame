@@ -26,7 +26,7 @@ namespace inonego.Xeri.UI
 
     #region 내부 데이터
 
-        private const string STYLE_SHEET_PATH = "Xeri/Bar/UITKBar";
+        private const string STYLE_SHEET_PATH = "Xeri/UI/Bar/UITKBar";
         private const string ROOT_CLASS = "xeri-bar";
         private const string BACKGROUND_CLASS = "xeri-bar__background";
         private const string CHANGE_CLASS = "xeri-bar__change";

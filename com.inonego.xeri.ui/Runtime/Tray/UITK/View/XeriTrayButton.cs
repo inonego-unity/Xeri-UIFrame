@@ -1,9 +1,10 @@
 /* BLOCK_HEADER_BEGIN =======================================================================
 파일명: XeriTrayButton.cs
-수정일 : 2026-11-02
+수정일 : 2026-11-19
 
 # 설명
 공통 Tray entry 하나를 표시하는 UITK VisualElement.
+항목 배지는 Xeri Core의 Badge를 쓰고 배경색만 항목 데이터로 정한다.
 ========================================================================= BLOCK_HEADER_END */
 
 using System;
@@ -25,8 +26,8 @@ namespace inonego.Xeri.UI.Tray
 
     #region Entry와 표시 요소
 
-        private const string TRAY_BUTTON_UXML_PATH = "XeriUI/Tray/XeriTrayButton";
-        private const string TRAY_BUTTON_USS_PATH  = "XeriUI/Tray/XeriTrayButtonStyles";
+        private const string TRAY_BUTTON_UXML_PATH = "Xeri/UI/Tray/XeriTrayButton";
+        private const string TRAY_BUTTON_USS_PATH  = "Xeri/UI/Tray/XeriTrayButtonStyles";
 
         // ------------------------------------------------------------
         /// <summary>
@@ -39,7 +40,7 @@ namespace inonego.Xeri.UI.Tray
 
         private readonly VisualElement iconElement = null;
         private readonly Label titleLabel = null;
-        private readonly Label badgeLabel = null;
+        private readonly Badge badgeElement = null;
         private readonly VisualElement stateMarker = null;
         private readonly Button closeButton = null;
 
@@ -81,15 +82,15 @@ namespace inonego.Xeri.UI.Tray
                 out var createdStateMarker,
                 out var createdIconElement,
                 out var createdTitleLabel,
-                out var createdBadgeLabel,
+                out var createdBadgeElement,
                 out var createdCloseButton
             );
 
-            stateMarker = createdStateMarker;
-            iconElement = createdIconElement;
-            titleLabel  = createdTitleLabel;
-            badgeLabel  = createdBadgeLabel;
-            closeButton = createdCloseButton;
+            stateMarker  = createdStateMarker;
+            iconElement  = createdIconElement;
+            titleLabel   = createdTitleLabel;
+            badgeElement = createdBadgeElement;
+            closeButton  = createdCloseButton;
 
             var closeIcon = new UICloseIcon
             {
@@ -101,7 +102,7 @@ namespace inonego.Xeri.UI.Tray
             hierarchy.Add(stateMarker);
             hierarchy.Add(iconElement);
             hierarchy.Add(titleLabel);
-            hierarchy.Add(badgeLabel);
+            hierarchy.Add(badgeElement);
             hierarchy.Add(closeButton);
 
             RegisterCallback<ClickEvent>(OnClick);
@@ -177,7 +178,7 @@ namespace inonego.Xeri.UI.Tray
             out VisualElement stateMarker,
             out VisualElement iconElement,
             out Label titleLabel,
-            out Label badgeLabel,
+            out Badge badgeElement,
             out Button closeButton
         )
         {
@@ -190,16 +191,16 @@ namespace inonego.Xeri.UI.Tray
 
             var tree = template.CloneTree();
 
-            stateMarker = tree.Q<VisualElement>("entry-state-marker");
-            iconElement = tree.Q<VisualElement>("entry-icon");
-            titleLabel  = tree.Q<Label>("entry-title");
-            badgeLabel  = tree.Q<Label>("entry-badge");
-            closeButton = tree.Q<Button>("entry-close-button");
+            stateMarker  = tree.Q<VisualElement>("entry-state-marker");
+            iconElement  = tree.Q<VisualElement>("entry-icon");
+            titleLabel   = tree.Q<Label>("entry-title");
+            badgeElement = tree.Q<Badge>("entry-badge");
+            closeButton  = tree.Q<Button>("entry-close-button");
 
             if
             (
                 stateMarker == null || iconElement == null || titleLabel == null ||
-                badgeLabel == null || closeButton == null
+                badgeElement == null || closeButton == null
             )
             {
                 throw new InvalidOperationException("XeriTrayButton UXML에 필수 element가 없습니다.");
@@ -208,7 +209,7 @@ namespace inonego.Xeri.UI.Tray
             stateMarker.RemoveFromHierarchy();
             iconElement.RemoveFromHierarchy();
             titleLabel.RemoveFromHierarchy();
-            badgeLabel.RemoveFromHierarchy();
+            badgeElement.RemoveFromHierarchy();
             closeButton.RemoveFromHierarchy();
         }
 
@@ -254,9 +255,9 @@ namespace inonego.Xeri.UI.Tray
             var badge = entry != null ? entry.Badge : default;
             var visible = content.HasFlag(XeriTrayContent.Badge) && badge.IsVisible;
 
-            badgeLabel.text = badge.Text ?? string.Empty;
-            badgeLabel.style.backgroundColor = badge.Color;
-            badgeLabel.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+            badgeElement.text = badge.Text ?? string.Empty;
+            badgeElement.BackgroundColor = badge.Color;
+            badgeElement.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
         // ------------------------------------------------------------

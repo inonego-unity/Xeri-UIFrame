@@ -1,6 +1,6 @@
 /* BLOCK_HEADER_BEGIN =======================================================================
 파일명 : PresentationSurface.cs
-수정일 : 2026-11-02
+수정일 : 2026-11-12
 
 # 설명
 Embedded/shared-output Session의 Layer hierarchy containment와 root lifetime만 소유한다.
@@ -20,8 +20,25 @@ namespace inonego.Xeri.UI
 
         private sealed class OwnedLayer
         {
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 표시 중인 레이어의 정의를 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public PresentationPlanLayer Plan = null;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 표시 레이어의 출력 드라이버를 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public IPresentationLayerDriver Driver = null;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 레이어 반환 동작을 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public Action Release = null;
         }
 
@@ -29,7 +46,18 @@ namespace inonego.Xeri.UI
 
     #region 필드
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 표시 영역이 해제됐는지 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public bool IsDisposed { get; private set; }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 표시 영역이 가진 레이어 개수를 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public int Count => layers.Count;
 
         private readonly List<OwnedLayer> layers = new();
@@ -116,6 +144,11 @@ namespace inonego.Xeri.UI
             }
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 식별자에 해당하는 레이어 드라이버를 찾는다.
+        /// </summary>
+        // ------------------------------------------------------------
         public bool TryGetLayer(string layerID, out IPresentationLayerDriver driver)
         {
             if (!IsDisposed && !string.IsNullOrWhiteSpace(layerID))
@@ -201,6 +234,11 @@ namespace inonego.Xeri.UI
 
     #region 수명 해제
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 표시 영역이 소유한 레이어를 역순으로 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public void Dispose()
         {
             if (IsDisposed) return;

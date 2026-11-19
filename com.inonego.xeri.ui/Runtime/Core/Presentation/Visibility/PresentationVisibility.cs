@@ -276,9 +276,19 @@ namespace inonego.Xeri.UI
 
     #region 값 변환
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 표시 여부를 논리값으로 변환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public static implicit operator bool(PresentationVisibility value) =>
             value != null ? value.Modified : default;
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 다른 가시성 값과 동등성을 비교한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public override bool Equals(object obj)
         {
             if (obj is IReadOnlyMValue<bool> other)
@@ -289,8 +299,18 @@ namespace inonego.Xeri.UI
             return obj is bool value && EqualityComparer<bool>.Default.Equals(Modified, value);
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 가시성 값의 해시 코드를 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public override int GetHashCode() => Modified.GetHashCode();
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 표시 여부를 문자열로 표현한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public override string ToString() => $"{Modified}({Base})";
 
     #endregion

@@ -1,0 +1,33 @@
+/* 개발 빌드 진단창 테마 */
+.xeri-debug-remote {
+    --xeri-debug-bg: rgba(20, 23, 29, 0.96);
+    --xeri-debug-border: rgba(182, 191, 204, 0.28);
+    --xeri-debug-text: rgb(235, 238, 244);
+    --xeri-debug-muted: rgb(164, 174, 190);
+    --xeri-debug-accent: rgb(115, 174, 250);
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 350px;
+    max-height: 75%;
+    padding: 12px;
+    color: var(--xeri-debug-text);
+    background-color: var(--xeri-debug-bg);
+    border-width: 1px;
+    border-color: var(--xeri-debug-border);
+    border-radius: 6px;
+}
+.xeri-debug-remote__header {
+    min-height: 30px;
+    flex-direction: row;
+    align-items: center;
+    border-bottom-width: 1px;
+    border-bottom-color: var(--xeri-debug-border);
+}
+.xeri-debug-remote__title { -unity-font-style: bold; font-size: 14px; }
+.xeri-debug-remote__spacer { flex-grow: 1; }
+.xeri-debug-remote__content { min-height: 60px; max-height: 420px; margin-top: 8px; }
+.xeri-debug-remote__footer { margin-top: 8px; }
+.xeri-debug-remote__row { flex-direction: row; padding-top: 4px; padding-bottom: 4px; }
+.xeri-debug-remote__label { flex-grow: 1; color: var(--xeri-debug-muted); font-size: 11px; }
+.xeri-debug-remote__value { font-size: 11px; }

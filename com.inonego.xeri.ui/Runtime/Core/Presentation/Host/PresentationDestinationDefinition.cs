@@ -30,6 +30,7 @@ namespace inonego.Xeri.UI
         // ------------------------------------------------------------
         public string DestinationID => destinationID;
 
+        [InspectorName("연결 ID")]
         [SerializeField]
         private string destinationID = "";
 
@@ -40,6 +41,7 @@ namespace inonego.Xeri.UI
         // ------------------------------------------------------------
         public string LayerID => layerID;
 
+        [InspectorName("레이어 ID")]
         [SerializeField]
         private string layerID = "";
 

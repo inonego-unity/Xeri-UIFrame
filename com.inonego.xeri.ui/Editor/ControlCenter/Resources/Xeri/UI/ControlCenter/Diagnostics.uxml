@@ -1,0 +1,25 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+  <uie:Toolbar class="xeri-cc__subbar">
+    <uie:ToolbarButton name="diagnostics-run" text="검사" class="xeri-cc__subbar-button"/>
+    <uie:ToolbarButton name="filter-all" class="xeri-cc__subtab xeri-cc__filter"/>
+    <uie:ToolbarButton name="filter-error" class="xeri-cc__subtab xeri-cc__filter"/>
+    <uie:ToolbarButton name="filter-warning" class="xeri-cc__subtab xeri-cc__filter"/>
+    <uie:ToolbarButton name="filter-info" class="xeri-cc__subtab xeri-cc__filter"/>
+    <uie:ToolbarSpacer class="xeri-cc__fill"/>
+    <uie:ToolbarSearchField name="diagnostics-search" class="xeri-cc__subbar-search"/>
+  </uie:Toolbar>
+  <ui:Label name="diagnostics-scope" class="xeri-cc__scope"/>
+  <ui:TwoPaneSplitView name="diagnostics-split" fixed-pane-index="1" fixed-pane-initial-dimension="360" orientation="Horizontal" class="xeri-cc__split">
+    <ui:VisualElement class="xeri-cc__list-pane">
+      <ui:ListView name="diagnostics-list" show-alternating-row-backgrounds="ContentOnly" fixed-item-height="30" selection-type="Single" class="xeri-cc__list"/>
+      <ui:VisualElement name="diagnostics-empty" class="xeri-cc__empty-host"/>
+    </ui:VisualElement>
+    <ui:VisualElement name="diagnostics-detail" class="xeri-cc__detail">
+      <ui:VisualElement class="xeri-cc__detail-header">
+        <ui:Label name="diagnostics-title" class="xeri-cc__detail-title"/>
+        <ui:Label name="diagnostics-code" class="xeri-cc__detail-meta"/>
+      </ui:VisualElement>
+      <ui:ScrollView name="diagnostics-body" class="xeri-cc__detail-body"/>
+    </ui:VisualElement>
+  </ui:TwoPaneSplitView>
+</ui:UXML>

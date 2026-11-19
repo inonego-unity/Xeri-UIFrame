@@ -40,14 +40,53 @@ namespace inonego.Xeri.UI.TEST.Window
 
     internal sealed class TestWindowDriver : IXeriWindowDriver
     {
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 UI에 적용된 알파 상태를 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public PresentationAlpha Alpha { get; } = new();
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 UI의 표시 상태를 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public PresentationVisibility Visibility { get; } = new();
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 창의 위치를 반환하거나 설정한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public Vector2 Pos { get; set; } = Vector2.zero;
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 창의 크기를 반환하거나 설정한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public Vector2 Size { get; set; } = new Vector2(200f, 120f);
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 창의 상태를 반환하거나 설정한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public XeriWindowState State { get; set; } = XeriWindowState.Normal;
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 최대화 영역 적용 여부를 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public bool MaximizedApplied { get; private set; }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 창의 위치와 크기 영역을 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public Rect Bounds
         {
             get => new Rect(Pos, Size);
@@ -58,21 +97,41 @@ namespace inonego.Xeri.UI.TEST.Window
             }
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 창의 확정 상태를 반영한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public void CommitState(XeriWindowState state)
         {
             State = state;
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 창의 시각적 상태를 반영한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public void ApplyVisualState(XeriWindowState state)
         {
             // NONE
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 창의 위치와 크기를 반영한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public void ApplyBounds(Rect bounds)
         {
             Bounds = bounds;
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 창의 최대화 영역을 적용한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public void ApplyMaximizedBounds()
         {
             MaximizedApplied = true;
@@ -85,27 +144,57 @@ namespace inonego.Xeri.UI.TEST.Window
 
     internal sealed class TestFocusDriver : FocusDriverBehaviour
     {
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트에서 현재 선택된 포커스 요소를 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public override object Current => current;
 
         private object current = null;
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 선택을 복원할 대체 요소를 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public object Fallback { get; } = new object();
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 지정 요소를 포커스로 선택할 수 있는지 확인한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public override bool CanSelect(object target)
         {
             return target != null;
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 포커스 또는 표시 대상의 유효성을 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public override bool IsValid(object target)
         {
             return target != null;
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 지정 요소를 현재 포커스로 선택한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public override void Select(object target)
         {
             current = target;
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 선택할 수 있는 대체 포커스 대상을 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public override object FindFallback()
         {
             return Fallback;
@@ -118,6 +207,11 @@ namespace inonego.Xeri.UI.TEST.Window
 
     internal sealed class TestSession : IXeriUISession
     {
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 세션 데이터 버전을 보관한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public int Version { get; set; }
     }
 
@@ -127,12 +221,34 @@ namespace inonego.Xeri.UI.TEST.Window
 
     internal sealed class TestApplicationScreenSource : IScreenSource
     {
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 화면의 기본 포커스 대상을 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public VisualElement DefaultFocus { get; private set; }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 보조 포커스 대상을 보관한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public VisualElement SecondaryFocus { get; private set; }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 자원 반환 횟수를 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public int ReleaseCount { get; private set; }
 
         private VisualElement root = null;
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트용 화면 자원을 획득하고 횟수를 기록한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public ScreenInstance Acquire(ScreenViewScope scope)
         {
             if (scope.Layer is not IPresentationLayerDriver<VisualElement> layer)
@@ -158,6 +274,11 @@ namespace inonego.Xeri.UI.TEST.Window
             return new ScreenInstance(new UITKScreenDriver(root, DefaultFocus));
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트용 화면 자원을 반환하고 횟수를 기록한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public void Release(ScreenInstance instance)
         {
             ReleaseCount++;
@@ -170,16 +291,31 @@ namespace inonego.Xeri.UI.TEST.Window
 
     internal sealed class TestVisualFocusScope : IFocusScope
     {
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 화면의 기본 포커스 대상을 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public object DefaultFocus { get; }
 
         private readonly VisualElement root = null;
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 시각 요소 기반 테스트 포커스 범위를 만든다.
+        /// </summary>
+        // ------------------------------------------------------------
         public TestVisualFocusScope(VisualElement root, object defaultFocus)
         {
             this.root = root ?? throw new ArgumentNullException(nameof(root));
             DefaultFocus = defaultFocus;
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 포커스 범위가 지정 요소를 포함하는지 확인한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public bool ContainsFocus(object target)
         {
             if (target is not VisualElement element)
@@ -205,23 +341,86 @@ namespace inonego.Xeri.UI.TEST.Window
 
     internal sealed class TestViewSource : IXeriUIViewSource, IXeriUIViewSessionPersistence
     {
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 뷰 소스의 식별자를 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public string ID { get; }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 데이터 불러오기 횟수를 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public int LoadCount { get; private set; }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 자원 획득 횟수를 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public int AcquireCount { get; private set; }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 세션 저장 요청 횟수를 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public int SaveCount { get; private set; }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 자원 반환 횟수를 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public int ReleaseCount { get; private set; }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 마지막으로 전달된 뷰 범위를 보관한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public XeriUIViewScope LastScope { get; private set; }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 마지막으로 전달된 뷰를 보관한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public VisualElement LastView { get; private set; }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 부모가 지정된 뷰를 반환할지 결정한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public bool ReturnParentedView { get; set; }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 자원을 획득할 때 호출할 콜백을 보관한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public Action Acquiring { get; set; }
 
         private readonly VisualElement foreignParent = new();
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트용 콘텐츠 뷰 소스를 만든다.
+        /// </summary>
+        // ------------------------------------------------------------
         public TestViewSource(string id)
         {
             ID = id;
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트용 창 콘텐츠 뷰를 획득한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public VisualElement AcquireView(XeriUIViewScope scope)
         {
             AcquireCount++;
@@ -237,6 +436,11 @@ namespace inonego.Xeri.UI.TEST.Window
             return LastView;
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 획득한 창 콘텐츠 뷰를 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public void ReleaseView(XeriUIViewScope scope, VisualElement view)
         {
             ReleaseCount++;
@@ -245,6 +449,11 @@ namespace inonego.Xeri.UI.TEST.Window
             view?.RemoveFromHierarchy();
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 뷰의 테스트 세션 상태를 저장한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public void SaveSession(XeriUIViewScope scope)
         {
             SaveCount++;
@@ -256,6 +465,11 @@ namespace inonego.Xeri.UI.TEST.Window
             }
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 뷰의 테스트 세션 상태를 복원한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public void LoadSession(XeriUIViewScope scope)
         {
             LoadCount++;
@@ -265,21 +479,53 @@ namespace inonego.Xeri.UI.TEST.Window
 
     internal sealed class TestViewOnlySource : IXeriUIViewSource
     {
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 뷰 소스의 식별자를 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public string ID { get; }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 자원 획득 횟수를 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public int AcquireCount { get; private set; }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 자원 반환 횟수를 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public int ReleaseCount { get; private set; }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 콘텐츠 뷰만 제공하는 테스트 소스를 만든다.
+        /// </summary>
+        // ------------------------------------------------------------
         public TestViewOnlySource(string id)
         {
             ID = id;
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트용 창 콘텐츠 뷰를 획득한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public VisualElement AcquireView(XeriUIViewScope scope)
         {
             AcquireCount++;
             return new VisualElement();
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 획득한 창 콘텐츠 뷰를 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public void ReleaseView(XeriUIViewScope scope, VisualElement view)
         {
             ReleaseCount++;
@@ -293,10 +539,20 @@ namespace inonego.Xeri.UI.TEST.Window
 
     internal sealed class CallbackDragFactory : IXeriWindowDragFactory
     {
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 끌기 동작 생성 시 호출할 콜백을 보관한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public Action<XeriWindowPanel, XeriWindowController> Creating { get; set; }
 
         private readonly XeriWindowDragFactory inner = new();
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 창 제목줄의 끌기 동작을 만든다.
+        /// </summary>
+        // ------------------------------------------------------------
         public XeriWindowTitleBarManipulator CreateTitleBarDrag
         (
             XeriWindowPanel panel,
@@ -314,10 +570,39 @@ namespace inonego.Xeri.UI.TEST.Window
 
     internal sealed class WorkspaceFixture : IDisposable
     {
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 레이어 출력 드라이버를 보관한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public IPresentationLayerDriver<VisualElement> LayerDriver { get; }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 작업 공간의 배치 루트를 보관한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public VisualElement WorkspacePlacementRoot { get; }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 포커스 드라이버를 보관한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public TestFocusDriver FocusDriver { get; }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 게임 입력 액션 맵을 보관한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public InputActionMap GameplayMap { get; }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 창 작업 공간을 보관한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public XeriWindowWorkspace Workspace { get; }
 
         private readonly List<PresentationLayout> ownedLayouts = new();
@@ -333,9 +618,20 @@ namespace inonego.Xeri.UI.TEST.Window
         private readonly InputActionAsset gameplayActions = null;
         private readonly UISettingsAsset settings = null;
         private readonly PanelSettings panelSettings = null;
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 작업 공간의 부모 컨텍스트를 보관한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public UIContext ParentContext => rootContext;
         private readonly UIContext rootContext = null;
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 작업 공간과 의존 객체를 구성한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public WorkspaceFixture
         (
             IXeriUIViewResolver viewResolver = null,
@@ -458,6 +754,11 @@ namespace inonego.Xeri.UI.TEST.Window
             );
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트 앱 창의 생성 옵션을 구성한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public XeriWindowApplicationOptions CreateApplicationOptions(string prefix = "Application")
         {
             var screenID = $"{prefix}.Screen";
@@ -476,6 +777,11 @@ namespace inonego.Xeri.UI.TEST.Window
             return new XeriWindowApplicationOptions(layout);
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트용 자원을 해제하고 실행 결과를 기록한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public void Dispose()
         {
             inputDriver.OnPolicySettled -= authority.HandleInputPolicySettled;

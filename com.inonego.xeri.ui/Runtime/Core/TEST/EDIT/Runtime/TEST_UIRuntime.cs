@@ -44,8 +44,25 @@ namespace inonego.Xeri.UI.TEST.Core
     [ExecuteAlways]
     public sealed class SplashTestParentAlphaObserver : MonoBehaviour
     {
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 스플래시 부모의 캔버스 그룹을 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public CanvasGroup Group { get; set; }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 부모 변경 시 비활성화할지 지정한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public bool DisableOnAttach { get; set; }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 부모 상태가 변경된 횟수를 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public int ChangeCount { get; private set; }
 
         private void OnTransformParentChanged()
@@ -80,12 +97,28 @@ namespace inonego.Xeri.UI.TEST.Core
         // ============================================================
         private sealed class SplashFailingAlphaTarget : IPresentationAlphaTarget
         {
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 출력 대상의 유효성을 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public bool IsValid => true;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 UI에 적용된 알파 상태를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public float Alpha { get; private set; } = 1f;
 
             private bool entered;
             private bool visible;
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 표시 대상에 알파 값을 적용한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void SetAlpha(float alpha)
             {
                 if (visible && alpha <= 0f)
@@ -313,6 +346,11 @@ namespace inonego.Xeri.UI.TEST.Core
             // ------------------------------------------------------------
             public object DefaultFocus => null;
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 화면 출력 드라이버를 만든다.
+            /// </summary>
+            // ------------------------------------------------------------
             public TestScreenDriver() : base()
             {
                 Alpha = new PresentationAlpha(this);
@@ -365,10 +403,39 @@ namespace inonego.Xeri.UI.TEST.Core
         // ============================================================
         private sealed class RuntimeFixture
         {
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트에 사용할 UI 런타임을 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public UIRuntime Runtime { get; set; }
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 페이드 표시 소스를 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public UISceneFadeSource FadeSource { get; set; }
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 검증할 UI 설정을 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public UISettingsAsset Settings { get; set; }
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 페이드 자원 공급자를 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public TestProvider FadeProvider { get; set; }
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 표현 계층의 루트 오브젝트를 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public Transform PresentationRoot { get; set; }
         }
 
@@ -379,8 +446,18 @@ namespace inonego.Xeri.UI.TEST.Core
         // ============================================================
         private sealed class ThrowingHandle : IDisposable
         {
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 사용권의 해제 횟수를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public int DisposeCount { get; private set; }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트용 자원을 해제하고 실행 결과를 기록한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Dispose()
             {
                 DisposeCount++;
@@ -395,11 +472,39 @@ namespace inonego.Xeri.UI.TEST.Core
         // ======================================================================
         private sealed class AuthorityFocusDriver : FocusDriverBehaviour
         {
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트에서 선택할 대상 요소를 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public object Target { get; } = new object();
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 선택 요청 중 실행할 검사용 콜백을 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public Action<object> Selecting { get; set; }
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 선택 요청의 남은 실패 횟수를 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public int SelectFailureCount { get; set; } = 0;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 현재 포커스 조회의 남은 실패 횟수를 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public int CurrentFailureCount { get; set; } = 0;
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트에서 현재 선택된 포커스 요소를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public override object Current
             {
                 get
@@ -414,16 +519,31 @@ namespace inonego.Xeri.UI.TEST.Core
                 }
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 지정 요소를 포커스로 선택할 수 있는지 확인한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public override bool CanSelect(object target)
             {
                 return ReferenceEquals(target, Target);
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 포커스 또는 표시 대상의 유효성을 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public override bool IsValid(object target)
             {
                 return ReferenceEquals(target, Target);
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 지정 요소를 현재 포커스로 선택한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public override void Select(object target)
             {
                 Selecting?.Invoke(target);
@@ -434,6 +554,11 @@ namespace inonego.Xeri.UI.TEST.Core
                 throw new InvalidOperationException("injected authority focus failure");
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 선택할 수 있는 대체 포커스 대상을 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public override object FindFallback()
             {
                 return Target;

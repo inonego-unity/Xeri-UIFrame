@@ -289,9 +289,19 @@ namespace inonego.Xeri.UI
 
     #region 값 변환
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 표시 알파 값을 실수로 변환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public static implicit operator float(PresentationAlpha value) =>
             value != null ? value.Modified : default;
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 다른 알파 값과의 동등성을 비교한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public override bool Equals(object obj)
         {
             if (obj is IReadOnlyMValue<float> other)
@@ -302,8 +312,18 @@ namespace inonego.Xeri.UI
             return obj is float value && EqualityComparer<float>.Default.Equals(Modified, value);
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 알파 값의 해시 코드를 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public override int GetHashCode() => Modified.GetHashCode();
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 알파 값을 문자열로 표현한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public override string ToString() => $"{Modified}({Base})";
 
     #endregion

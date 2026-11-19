@@ -47,16 +47,60 @@ namespace inonego.Xeri.UI.TEST.Core
         // ============================================================
         private sealed class TestFadeDriver : ISceneFadeDriver, IPresentationAlphaTarget
         {
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 UI에 적용된 알파 상태를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public PresentationAlpha Alpha { get; }
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 UI의 표시 상태를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public PresentationVisibility Visibility => null;
 
-
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 페이드에 적용한 색상을 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public Color Color { get; private set; }
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 색상을 적용할 때 호출할 콜백을 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public Action<Color> OnSetColor { get; set; }
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 다음 출력 적용에 실패할지 지정한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public bool FailNextApply { get; set; }
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 출력 상태를 적용한 횟수를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public int ApplyCount { get; private set; }
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 마지막으로 적용한 알파 값을 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public float AppliedAlpha { get; private set; }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 페이드 출력 드라이버를 만든다.
+            /// </summary>
+            // ------------------------------------------------------------
             public TestFadeDriver() : base()
             {
                 Alpha = new PresentationAlpha(this, 0.0f);
@@ -78,6 +122,11 @@ namespace inonego.Xeri.UI.TEST.Core
                 AppliedAlpha = alpha;
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 페이드 색상 적용 요청을 기록한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void SetColor(Color color)
             {
                 Color = color;
@@ -92,13 +141,53 @@ namespace inonego.Xeri.UI.TEST.Core
         // ============================================================
         private sealed class TestFadeSource : IPresentationSource<ISceneFadeDriver>
         {
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트에 사용하는 출력 드라이버를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public TestFadeDriver Driver { get; } = new TestFadeDriver();
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 다음 반환 요청에 실패할지 지정한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public bool FailNextRelease { get; set; }
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 자원을 획득할 때 호출할 콜백을 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public Action Acquiring { get; set; }
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 자원을 반환할 때 호출할 콜백을 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public Action Releasing { get; set; }
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 자원 획득 횟수를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public int AcquireCount { get; private set; }
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 자원 반환 횟수를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public int ReleaseCount { get; private set; }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트용 화면 자원을 획득하고 횟수를 기록한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public ISceneFadeDriver Acquire(IPresentationLayerDriver layer)
             {
                 AcquireCount++;
@@ -106,6 +195,11 @@ namespace inonego.Xeri.UI.TEST.Core
                 return Driver;
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트용 화면 자원을 반환하고 횟수를 기록한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Release(ISceneFadeDriver view)
             {
                 Releasing?.Invoke();
@@ -127,6 +221,11 @@ namespace inonego.Xeri.UI.TEST.Core
         // ======================================================================
         private sealed class ImmediateTransitioner : IPresentationTransitioner
         {
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 전환 실행 요청을 처리하거나 검사용 오류를 발생시킨다.
+            /// </summary>
+            // ------------------------------------------------------------
             public PresentationTransitionHandle Play
             (
                 PresentationTransitionParams parameters,
@@ -141,6 +240,11 @@ namespace inonego.Xeri.UI.TEST.Core
                 return handle;
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트용 자원을 해제하고 실행 결과를 기록한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Dispose()
             {
                 // NONE
@@ -154,6 +258,11 @@ namespace inonego.Xeri.UI.TEST.Core
         // ============================================================
         private sealed class ThrowingTransitioner : IPresentationTransitioner
         {
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 전환 실행 요청을 처리하거나 검사용 오류를 발생시킨다.
+            /// </summary>
+            // ------------------------------------------------------------
             public PresentationTransitionHandle Play
             (
                 PresentationTransitionParams parameters,
@@ -164,6 +273,11 @@ namespace inonego.Xeri.UI.TEST.Core
                 throw new InvalidOperationException("injected transition failure");
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트용 자원을 해제하고 실행 결과를 기록한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Dispose()
             {
                 // NONE
@@ -184,11 +298,39 @@ namespace inonego.Xeri.UI.TEST.Core
             // ============================================================
             public sealed class Request
             {
+                // ------------------------------------------------------------
+                /// <summary>
+                /// 요청한 전환 매개변수를 보관한다.
+                /// </summary>
+                // ------------------------------------------------------------
                 public PresentationTransitionParams Params { get; }
+
+                // ------------------------------------------------------------
+                /// <summary>
+                /// 전환 요청의 완료 핸들을 보관한다.
+                /// </summary>
+                // ------------------------------------------------------------
                 public PresentationTransitionHandle Handle { get; set; }
+
+                // ------------------------------------------------------------
+                /// <summary>
+                /// 전환 완료 콜백을 보관한다.
+                /// </summary>
+                // ------------------------------------------------------------
                 public Action Completed { get; }
+
+                // ------------------------------------------------------------
+                /// <summary>
+                /// 전환 실패 콜백을 보관한다.
+                /// </summary>
+                // ------------------------------------------------------------
                 public Action<Exception> Failed { get; }
 
+                // ------------------------------------------------------------
+                /// <summary>
+                /// 전환 요청과 완료 콜백을 저장한다.
+                /// </summary>
+                // ------------------------------------------------------------
                 public Request
                 (
                     PresentationTransitionParams parameters,
@@ -208,6 +350,12 @@ namespace inonego.Xeri.UI.TEST.Core
             /// </summary>
             // ------------------------------------------------------------
             public int Count => requests.Count;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 마지막으로 생성한 전환 요청을 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public Request LatestRequest => requests[requests.Count - 1];
 
             private readonly List<Request> requests = new List<Request>();

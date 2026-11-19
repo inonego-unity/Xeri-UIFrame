@@ -1,0 +1,13 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+  <ui:TwoPaneSplitView name="settings-split" fixed-pane-index="0" fixed-pane-initial-dimension="190" orientation="Horizontal" class="xeri-cc__split">
+    <ui:ListView name="settings-categories" show-alternating-row-backgrounds="ContentOnly" fixed-item-height="32" selection-type="Single" class="xeri-cc__nav-list"/>
+    <ui:VisualElement name="settings-detail" class="xeri-cc__detail">
+      <ui:VisualElement class="xeri-cc__detail-header">
+        <ui:Label name="settings-title" class="xeri-cc__detail-title"/>
+        <ui:Label name="settings-location" class="xeri-cc__detail-meta"/>
+      </ui:VisualElement>
+      <ui:VisualElement name="settings-body" class="xeri-cc__detail-body"/>
+    </ui:VisualElement>
+  </ui:TwoPaneSplitView>
+  <ui:VisualElement name="settings-empty" class="xeri-cc__empty-host"/>
+</ui:UXML>

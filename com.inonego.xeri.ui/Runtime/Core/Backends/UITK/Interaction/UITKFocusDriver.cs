@@ -1,6 +1,6 @@
 /* BLOCK_HEADER_BEGIN =======================================================================
 파일명 : UITKFocusDriver.cs
-수정일 : 2026-11-04
+수정일 : 2026-11-12
 
 # 설명
 등록된 UITK Presentation Layer 범위의 Unity native Focus를 관찰하고 선택하는 얇은 backend bridge.
@@ -26,6 +26,11 @@ namespace inonego.Xeri.UI
 
     #region 필드
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 현재 선택된 UI Toolkit 요소를 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public override object Current => IsValid(current) ? current : null;
 
         [SerializeField]
@@ -41,6 +46,11 @@ namespace inonego.Xeri.UI
 
     #region 포커스 드라이버 기반 구현
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 지정 요소를 선택할 수 있는지 확인한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public override bool CanSelect(object target) => target is VisualElement;
 
         // ----------------------------------------------------------------------
@@ -135,6 +145,11 @@ namespace inonego.Xeri.UI
 
     #region 포커스 드라이버 구현
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 지정 포커스 요소의 유효성을 확인한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public override bool IsValid(object target)
         {
             if
@@ -174,6 +189,11 @@ namespace inonego.Xeri.UI
             PublishCurrent(element);
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 현재 컨테이너에서 대체 포커스 요소를 찾는다.
+        /// </summary>
+        // ------------------------------------------------------------
         public override object FindFallback()
         {
             if (string.IsNullOrWhiteSpace(fallbackName)) return null;

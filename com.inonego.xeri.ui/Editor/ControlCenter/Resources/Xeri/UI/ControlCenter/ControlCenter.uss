@@ -1,0 +1,847 @@
+/* BLOCK_HEADER_BEGIN =======================================================================
+파일명 : ControlCenter.uss
+수정일 : 2026-11-17
+
+# 설명
+Xeri UI 관리 도구의 테마 토큰과 영역별 스타일을 정의한다.
+
+# 특이사항, 제약사항
+색상·크기는 1번 테마 토큰에서만 정의하고, Light Skin은 .xeri-cc--light에서 같은 토큰을 덮어쓴다.
+Unity 기본 컨트롤(ObjectField, PropertyField, ToolbarSearchField 등)의 내부 요소 스타일은 바꾸지 않는다.
+강조색은 탭·링크·선택·심각도에만 쓰고 작업 면 전체를 칠하지 않는다.
+========================================================================= BLOCK_HEADER_END */
+
+/* ============================================================
+   1. 테마 토큰
+   - 색상, 글자 크기, 간격, 높이는 여기에서만 정의
+   - 아래 영역은 토큰만 참조
+   ============================================================ */
+.xeri-cc {
+    /* 면 */
+    --xeri-cc-bg: rgb(32, 32, 32);
+    --xeri-cc-bar: rgb(40, 40, 40);
+    --xeri-cc-pane: rgb(36, 36, 36);
+    --xeri-cc-card: rgb(42, 42, 42);
+    --xeri-cc-card-header: rgb(46, 46, 46);
+    --xeri-cc-hover: rgba(255, 255, 255, 0.05);
+    --xeri-row-alt: rgba(127, 127, 127, 0.06);
+    --xeri-cc-active: rgba(255, 255, 255, 0.08);
+
+    /* 선 */
+    --xeri-cc-border: rgb(24, 24, 24);
+    --xeri-cc-divider: rgb(56, 56, 56);
+    --xeri-cc-outline: rgb(70, 70, 70);
+
+    /* 글자 */
+    --xeri-cc-text: rgb(222, 222, 222);
+    --xeri-cc-text-strong: rgb(240, 240, 240);
+    --xeri-cc-muted: rgb(150, 150, 150);
+    --xeri-cc-subtle: rgb(118, 118, 118);
+
+    /* 강조와 상태 */
+    --xeri-cc-accent: rgb(110, 168, 236);
+    --xeri-cc-accent-soft: rgba(110, 168, 236, 0.16);
+    --xeri-cc-error: rgb(226, 104, 104);
+    --xeri-cc-warning: rgb(224, 172, 82);
+    --xeri-cc-success: rgb(112, 184, 132);
+
+    /* 글자 크기 */
+    --xeri-cc-font-small: 11px;
+    --xeri-cc-font-body: 12px;
+    --xeri-cc-font-title: 13px;
+
+    /* 간격과 높이 */
+    --xeri-cc-space-xs: 4px;
+    --xeri-cc-space-sm: 6px;
+    --xeri-cc-space-md: 10px;
+    --xeri-cc-space-lg: 14px;
+    --xeri-cc-bar-height: 30px;
+    --xeri-cc-subbar-height: 28px;
+    --xeri-cc-header-height: 38px;
+    --xeri-cc-row-height: 30px;
+    --xeri-cc-key-width: 128px;
+    --xeri-cc-key-width-compact: 72px;
+    --xeri-cc-icon-small: 12px;
+    --xeri-cc-icon-tool: 10px;
+    --xeri-cc-severity-box: 16px;
+    --xeri-cc-severity-inset: 2px;
+    --xeri-cc-radius: 4px;
+
+    flex-grow: 1;
+    min-width: 0;
+    min-height: 0;
+    background-color: var(--xeri-cc-bg);
+    color: var(--xeri-cc-text);
+    font-size: var(--xeri-cc-font-body);
+}
+
+.xeri-cc--light {
+    --xeri-cc-bg: rgb(222, 222, 222);
+    --xeri-cc-bar: rgb(210, 210, 210);
+    --xeri-cc-pane: rgb(214, 214, 214);
+    --xeri-cc-card: rgb(236, 236, 236);
+    --xeri-cc-card-header: rgb(228, 228, 228);
+    --xeri-cc-hover: rgba(0, 0, 0, 0.05);
+    --xeri-cc-active: rgba(0, 0, 0, 0.08);
+    --xeri-cc-border: rgb(160, 160, 160);
+    --xeri-cc-divider: rgb(196, 196, 196);
+    --xeri-cc-outline: rgb(170, 170, 170);
+    --xeri-cc-text: rgb(36, 36, 36);
+    --xeri-cc-text-strong: rgb(12, 12, 12);
+    --xeri-cc-muted: rgb(96, 96, 96);
+    --xeri-cc-subtle: rgb(128, 128, 128);
+    --xeri-cc-accent: rgb(32, 96, 176);
+    --xeri-cc-accent-soft: rgba(32, 96, 176, 0.14);
+    --xeri-cc-error: rgb(180, 50, 50);
+    --xeri-cc-warning: rgb(160, 104, 20);
+    --xeri-cc-success: rgb(40, 128, 70);
+}
+
+/* ============================================================
+   2. 공통 배치
+   ============================================================ */
+.xeri-cc__fill {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.xeri-cc__pages,
+.xeri-cc__page,
+.xeri-cc__split,
+.xeri-cc__empty-host {
+    flex-grow: 1;
+    min-height: 0;
+}
+
+/* ============================================================
+   3. 창 상단 막대 · 탭
+   - 탭은 아이콘과 이름, 선택 탭은 아래 강조선으로 구분
+   - 좁은 창(.xeri-cc--compact)에서는 아이콘만 남김
+   ============================================================ */
+.xeri-cc__toolbar {
+    flex-shrink: 0;
+    height: var(--xeri-cc-bar-height);
+    padding-left: var(--xeri-cc-space-xs);
+    padding-right: var(--xeri-cc-space-sm);
+    align-items: stretch;
+    background-color: var(--xeri-cc-bar);
+    border-bottom-width: 1px;
+    border-bottom-color: var(--xeri-cc-border);
+}
+
+.xeri-cc__tabs {
+    flex-direction: row;
+    flex-shrink: 0;
+    align-items: stretch;
+}
+
+.xeri-cc__tab {
+    height: auto;
+    margin: 0;
+    padding-left: var(--xeri-cc-space-md);
+    padding-right: var(--xeri-cc-space-md);
+    border-width: 0 0 2px 0;
+    border-color: rgba(0, 0, 0, 0);
+    border-radius: 0;
+    background-color: rgba(0, 0, 0, 0);
+    color: var(--xeri-cc-muted);
+    -unity-text-align: middle-center;
+}
+
+.xeri-cc__tab:hover {
+    background-color: var(--xeri-cc-hover);
+    color: var(--xeri-cc-text);
+}
+
+.xeri-cc__tab .unity-button__image {
+    width: 14px;
+    min-width: 14px;
+    height: 14px;
+    min-height: 14px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    align-self: center;
+    margin-right: 6px;
+    --unity-image-size: scale-to-fit;
+    --unity-image-tint-color: var(--xeri-cc-muted);
+}
+
+.xeri-cc__tab--active {
+    border-bottom-color: var(--xeri-cc-accent);
+    background-color: var(--xeri-cc-active);
+    color: var(--xeri-cc-text-strong);
+    -unity-font-style: bold;
+}
+
+.xeri-cc__tab--active .unity-button__image {
+    --unity-image-tint-color: var(--xeri-cc-accent);
+}
+
+.xeri-cc--compact .xeri-cc__tab {
+    padding-left: var(--xeri-cc-space-sm);
+    padding-right: var(--xeri-cc-space-sm);
+}
+
+.xeri-cc--compact .xeri-cc__tab .unity-button__image {
+    margin-right: 0;
+}
+
+/* 설정 메뉴와 검사 칩은 막대 오른쪽에 둥근 칩으로 배치한다. */
+.xeri-cc__settings-menu,
+.xeri-cc__validation {
+    align-self: center;
+    height: 22px;
+    margin: 0 0 0 var(--xeri-cc-space-sm);
+    padding: 0 var(--xeri-cc-space-sm);
+    border-width: 1px;
+    border-color: var(--xeri-cc-outline);
+    border-radius: var(--xeri-cc-radius);
+    background-color: var(--xeri-cc-card);
+}
+
+.xeri-cc__settings-menu {
+    flex-shrink: 1;
+    min-width: 0;
+    max-width: 280px;
+}
+
+.xeri-cc__settings-menu:hover,
+.xeri-cc__validation:hover {
+    background-color: var(--xeri-cc-card-header);
+}
+
+.xeri-cc__validation {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+/* 심각도 아이콘의 크기는 Xeri Core SeverityIndicator 규격(Severity.uss)을 따르고 간격만 지정한다. */
+.xeri-cc__validation-icon {
+    margin-right: var(--xeri-cc-space-xs);
+}
+
+.xeri-cc__validation-text {
+    color: var(--xeri-cc-muted);
+}
+
+.xeri-cc__validation--error { border-color: var(--xeri-cc-error); }
+.xeri-cc__validation--warning { border-color: var(--xeri-cc-warning); }
+.xeri-cc__validation--ok { border-color: var(--xeri-cc-success); }
+
+.xeri-cc__validation--error .xeri-cc__validation-text,
+.xeri-cc__validation--warning .xeri-cc__validation-text,
+.xeri-cc__validation--ok .xeri-cc__validation-text {
+    color: var(--xeri-cc-text);
+}
+
+/* ============================================================
+   4. 화면 보조 막대 · 필터
+   ============================================================ */
+.xeri-cc__subbar {
+    flex-shrink: 0;
+    height: var(--xeri-cc-subbar-height);
+    padding-left: var(--xeri-cc-space-sm);
+    padding-right: var(--xeri-cc-space-sm);
+    align-items: center;
+    background-color: var(--xeri-cc-pane);
+    border-bottom-width: 1px;
+    border-bottom-color: var(--xeri-cc-border);
+}
+
+/* 보조 탭과 심각도 필터는 둥근 토글 칩으로 표시한다. */
+.xeri-cc__subtab {
+    height: 20px;
+    margin: 0 2px 0 0;
+    padding: 0 var(--xeri-cc-space-md);
+    border-width: 1px;
+    border-color: rgba(0, 0, 0, 0);
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0);
+    color: var(--xeri-cc-muted);
+}
+
+.xeri-cc__subtab:hover {
+    background-color: var(--xeri-cc-hover);
+    color: var(--xeri-cc-text);
+}
+
+.xeri-cc__subtab:checked,
+.xeri-cc__subtab--active {
+    border-color: var(--xeri-cc-accent);
+    background-color: var(--xeri-cc-accent-soft);
+    color: var(--xeri-cc-text-strong);
+}
+
+/* 진단 필터: 아이콘과 이름·개수를 한 줄에 배치한다. */
+.xeri-cc__filter {
+    flex-direction: row;
+    align-items: center;
+}
+
+/* 전체 필터 아이콘은 옆의 SeverityIndicator와 같은 박스(16px, 안쪽 2px)로 맞춘다.
+   SeverityIndicator 자체 크기와 색은 Core 스타일이 우선한다. */
+.xeri-cc__filter-icon {
+    width: var(--xeri-cc-severity-box);
+    min-width: var(--xeri-cc-severity-box);
+    height: var(--xeri-cc-severity-box);
+    min-height: var(--xeri-cc-severity-box);
+    padding: var(--xeri-cc-severity-inset);
+    flex-shrink: 0;
+    margin-right: var(--xeri-cc-space-xs);
+    --unity-image-size: scale-to-fit;
+    --unity-image-tint-color: var(--xeri-cc-muted);
+}
+
+.xeri-cc__filter-text {
+    -unity-text-align: middle-left;
+    color: var(--xeri-cc-muted);
+}
+
+.xeri-cc__subtab--active .xeri-cc__filter-text {
+    color: var(--xeri-cc-text-strong);
+}
+
+.xeri-cc__subbar-button {
+    height: 20px;
+    margin: 0 var(--xeri-cc-space-sm) 0 0;
+    padding: 0 var(--xeri-cc-space-md);
+    border-width: 1px;
+    border-color: var(--xeri-cc-outline);
+    border-radius: var(--xeri-cc-radius);
+    background-color: var(--xeri-cc-card);
+}
+
+.xeri-cc__subbar-button:hover {
+    background-color: var(--xeri-cc-card-header);
+}
+
+.xeri-cc__subbar-caption,
+.xeri-cc__pane-caption {
+    flex-shrink: 1;
+    min-width: 0;
+    padding: 0 var(--xeri-cc-space-xs);
+    -unity-text-align: middle-left;
+    color: var(--xeri-cc-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.xeri-cc__subbar-search {
+    width: 220px;
+    flex-shrink: 1;
+}
+
+.xeri-cc__scope {
+    flex-shrink: 0;
+    padding: var(--xeri-cc-space-xs) var(--xeri-cc-space-md);
+    font-size: var(--xeri-cc-font-small);
+    color: var(--xeri-cc-muted);
+    white-space: normal;
+    background-color: var(--xeri-cc-pane);
+    border-bottom-width: 1px;
+    border-bottom-color: var(--xeri-cc-border);
+}
+
+/* ============================================================
+   5. 목록 영역
+   - 왼쪽 목록은 상세 영역보다 한 단계 어두운 면
+   - 선택 색은 Unity 기본 목록 선택을 유지
+   ============================================================ */
+.xeri-cc__list-pane {
+    flex-grow: 1;
+    min-width: 0;
+    min-height: 0;
+    background-color: var(--xeri-cc-pane);
+}
+
+.xeri-cc__pane-toolbar {
+    flex-shrink: 0;
+    height: var(--xeri-cc-subbar-height);
+    align-items: center;
+    padding: 0 var(--xeri-cc-space-xs);
+    background-color: var(--xeri-cc-pane);
+    border-bottom-width: 1px;
+    border-bottom-color: var(--xeri-cc-divider);
+}
+
+.xeri-cc__pane-search {
+    flex-grow: 1;
+    flex-shrink: 1;
+    width: auto;
+    min-width: 0;
+}
+
+/* 아이콘만 있는 버튼은 이미지가 버튼 높이만큼 늘어나지 않도록 크기를 고정한다. */
+.xeri-cc__icon-button {
+    width: 24px;
+    min-width: 24px;
+    height: 20px;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+.xeri-cc__icon-button .unity-button__image {
+    width: var(--xeri-cc-icon-tool);
+    height: var(--xeri-cc-icon-tool);
+    min-width: var(--xeri-cc-icon-tool);
+    min-height: var(--xeri-cc-icon-tool);
+    flex-grow: 0;
+    flex-shrink: 0;
+    align-self: center;
+    margin: 0;
+    --unity-image-size: scale-to-fit;
+    --unity-image-tint-color: var(--xeri-cc-text);
+}
+
+.xeri-cc__list,
+.xeri-cc__nav-list {
+    flex-grow: 1;
+    min-height: 0;
+    background-color: var(--xeri-cc-pane);
+}
+
+.xeri-cc__list-empty {
+    padding: var(--xeri-cc-space-lg) var(--xeri-cc-space-md);
+    -unity-text-align: upper-center;
+    white-space: normal;
+    color: var(--xeri-cc-muted);
+}
+
+.xeri-cc__list-item {
+    flex-direction: row;
+    align-items: center;
+    flex-grow: 1;
+    min-width: 0;
+    padding: 0 var(--xeri-cc-space-md);
+}
+
+.xeri-cc__list-item--two-line {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    border-bottom-width: 1px;
+    border-bottom-color: var(--xeri-cc-divider);
+}
+
+.xeri-cc__list-item-heading {
+    flex-direction: row;
+    align-items: center;
+    min-width: 0;
+}
+
+.xeri-cc__list-item-name {
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.xeri-cc__list-item--two-line .xeri-cc__list-item-name {
+    color: var(--xeri-cc-text-strong);
+    -unity-font-style: bold;
+}
+
+.xeri-cc__list-item-badges {
+    flex-direction: row;
+    flex-shrink: 0;
+    margin-left: var(--xeri-cc-space-xs);
+}
+
+/* 배지 사이 간격은 배치를 맡은 목록이 정한다. */
+.xeri-cc__list-item-badges > .xeri-badge {
+    margin-left: var(--xeri-cc-space-xs);
+}
+
+.xeri-cc__list-item-meta {
+    flex-grow: 1;
+    flex-shrink: 0;
+    margin-left: var(--xeri-cc-space-sm);
+    -unity-text-align: middle-right;
+    font-size: var(--xeri-cc-font-small);
+    color: var(--xeri-cc-muted);
+}
+
+.xeri-cc__list-item-meta--error {
+    color: var(--xeri-cc-error);
+}
+
+.xeri-cc__list-item-detail {
+    margin-top: 2px;
+    font-size: var(--xeri-cc-font-small);
+    color: var(--xeri-cc-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.xeri-cc__nav-item {
+    flex-grow: 1;
+    padding-left: var(--xeri-cc-space-md);
+    -unity-text-align: middle-left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.xeri-cc__nav-item--header {
+    margin-top: var(--xeri-cc-space-xs);
+    font-size: var(--xeri-cc-font-small);
+    color: var(--xeri-cc-subtle);
+    -unity-font-style: bold;
+}
+
+.xeri-cc__nav-item--active {
+    color: var(--xeri-cc-accent);
+}
+
+/* 짧은 상태 표식. 강조 표식은 기본 레이아웃처럼 의미가 있는 경우에만 쓴다.
+   모양은 Core Badge(높이 16px·10px 글자)를 따르고 관리 도구의 색·여백·둥근 모서리만 Badge 변수로 바꾼다. */
+.xeri-cc__badge {
+    --xeri-badge-padding: var(--xeri-cc-space-sm);
+    --xeri-badge-radius: 8px;
+    --xeri-badge-background-color: var(--xeri-cc-active);
+    --xeri-badge-accent-color: var(--xeri-cc-accent);
+    --xeri-badge-accent-background-color: var(--xeri-cc-accent-soft);
+
+    color: var(--xeri-cc-muted);
+}
+
+/* ============================================================
+   6. 상세 영역
+   ============================================================ */
+.xeri-cc__detail {
+    flex-grow: 1;
+    min-width: 0;
+    min-height: 0;
+    background-color: var(--xeri-cc-bg);
+}
+
+.xeri-cc__detail-header {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+    min-height: var(--xeri-cc-header-height);
+    padding: 0 var(--xeri-cc-space-md) 0 var(--xeri-cc-space-lg);
+    background-color: var(--xeri-cc-card);
+    border-bottom-width: 1px;
+    border-bottom-color: var(--xeri-cc-border);
+}
+
+.xeri-cc__detail-title {
+    flex-shrink: 0;
+    font-size: var(--xeri-cc-font-title);
+    color: var(--xeri-cc-text-strong);
+    -unity-font-style: bold;
+}
+
+.xeri-cc__detail-meta {
+    flex-shrink: 1;
+    min-width: 0;
+    margin-left: var(--xeri-cc-space-md);
+    font-size: var(--xeri-cc-font-small);
+    color: var(--xeri-cc-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.xeri-cc__detail-body {
+    flex-grow: 1;
+    min-height: 0;
+}
+
+.xeri-cc__header-button {
+    flex-shrink: 0;
+    height: 22px;
+    margin: 0 0 0 var(--xeri-cc-space-sm);
+    padding: 0 var(--xeri-cc-space-md);
+    border-width: 1px;
+    border-color: var(--xeri-cc-outline);
+    border-radius: var(--xeri-cc-radius);
+    background-color: var(--xeri-cc-bg);
+}
+
+.xeri-cc__header-button:hover {
+    background-color: var(--xeri-cc-hover);
+}
+
+/* 상세 영역은 폭이 좁으므로 속성 이름 열을 줄인다. */
+.xeri-cc__detail-body .xeri-cc__row-key {
+    width: var(--xeri-cc-key-width-compact);
+    min-width: var(--xeri-cc-key-width-compact);
+}
+
+.xeri-cc__inspector {
+    padding-top: var(--xeri-cc-space-sm);
+    border-top-width: 1px;
+    border-top-color: var(--xeri-cc-divider);
+}
+
+/* ============================================================
+   7. 편집 양식 · 컬렉션
+   - 컬렉션은 여백 없이 상세 영역을 가득 채움
+   - Xeri Core Collection Editor 채움 모드로 내부 스크롤과 겹치지 않음
+   ============================================================ */
+/* Inspector 정렬 클래스가 늘리는 높이를 막고, 폭은 상세 영역을 좌우로 가득 채운다. */
+.xeri-cc__form {
+    flex-grow: 0;
+    flex-shrink: 0;
+    padding: var(--xeri-cc-space-md) var(--xeri-cc-space-lg);
+}
+
+.xeri-cc__form-scroll {
+    flex-grow: 1;
+    min-height: 0;
+}
+
+.xeri-cc__form-heading {
+    margin: var(--xeri-cc-space-lg) 0 var(--xeri-cc-space-xs) 0;
+    padding-bottom: var(--xeri-cc-space-xs);
+    color: var(--xeri-cc-text-strong);
+    -unity-font-style: bold;
+    border-bottom-width: 1px;
+    border-bottom-color: var(--xeri-cc-divider);
+}
+
+.xeri-cc__collection-fill {
+    flex-grow: 1;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.xeri-cc__collection-fill > .unity-property-field {
+    flex-grow: 1;
+    min-height: 0;
+    margin: 0;
+}
+
+.xeri-cc__collection-fill .xeri-collection {
+    --xeri-collection-fill: 1;
+}
+
+/* 입력 양식 아래 컬렉션은 경계선으로만 구분한다. */
+.xeri-cc__collection-fill--below-form {
+    border-top-width: 1px;
+    border-top-color: var(--xeri-cc-border);
+}
+
+.xeri-cc__tables {
+    min-height: 0;
+}
+
+/* ============================================================
+   8. 개요 카드 · 속성 행
+   ============================================================ */
+/* 넓은 창에서는 카드가 나란히, 좁은 창에서는 위아래로 놓인다. */
+/* 개요는 구성(왼쪽)·진단(오른쪽) 카드를 나란히 두고 창 아래까지 늘린다.
+   좁은 창에서는 위아래로 놓고 두 카드가 높이를 나눠 가지며, 넘치는 내용은 카드 안에서 스크롤한다. */
+.xeri-cc__overview {
+    flex-grow: 1;
+    flex-direction: row;
+    align-items: stretch;
+    min-height: 0;
+    padding: var(--xeri-cc-space-xs);
+}
+
+.xeri-cc__overview-card {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
+    min-width: 0;
+    min-height: 0;
+}
+
+.xeri-cc--compact .xeri-cc__overview {
+    flex-direction: column;
+}
+
+.xeri-cc__section-body {
+    flex-grow: 1;
+    min-height: 0;
+}
+
+.xeri-cc__section {
+    margin: var(--xeri-cc-space-sm);
+    border-width: 1px;
+    border-color: var(--xeri-cc-border);
+    border-radius: var(--xeri-cc-radius);
+    background-color: var(--xeri-cc-card);
+}
+
+.xeri-cc__section-header {
+    flex-direction: row;
+    align-items: center;
+    min-height: 32px;
+    padding: 0 var(--xeri-cc-space-sm) 0 var(--xeri-cc-space-md);
+    background-color: var(--xeri-cc-card-header);
+    border-bottom-width: 1px;
+    border-bottom-color: var(--xeri-cc-border);
+    border-top-left-radius: var(--xeri-cc-radius);
+    border-top-right-radius: var(--xeri-cc-radius);
+}
+
+.xeri-cc__section-title {
+    font-size: var(--xeri-cc-font-title);
+    color: var(--xeri-cc-text-strong);
+    -unity-font-style: bold;
+}
+
+.xeri-cc__section .xeri-cc__rows {
+    padding: var(--xeri-cc-space-xs) 0;
+}
+
+.xeri-cc__rows {
+    padding: var(--xeri-cc-space-sm) var(--xeri-cc-space-xs);
+}
+
+.xeri-cc__row {
+    flex-direction: row;
+    align-items: center;
+    min-height: var(--xeri-cc-row-height);
+    padding: 0 var(--xeri-cc-space-md);
+}
+
+/* 짝수 번째 행. 호버가 뒤에 있어 호버 색이 우선한다. */
+.xeri-cc__row--alt {
+    background-color: var(--xeri-row-alt);
+}
+
+.xeri-cc__row:hover {
+    background-color: var(--xeri-cc-hover);
+}
+
+.xeri-cc__row-key {
+    width: var(--xeri-cc-key-width);
+    min-width: var(--xeri-cc-key-width);
+    flex-shrink: 0;
+    color: var(--xeri-cc-muted);
+}
+
+.xeri-cc__row-value {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    white-space: normal;
+}
+
+.xeri-cc__row-link {
+    flex-shrink: 1;
+    min-width: 0;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    background-color: rgba(0, 0, 0, 0);
+    color: var(--xeri-cc-text);
+    -unity-text-align: middle-left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 이동할 수 있는 값은 마우스를 올렸을 때만 강조색으로 표시한다. */
+.xeri-cc__row-link:hover {
+    background-color: rgba(0, 0, 0, 0);
+    color: var(--xeri-cc-accent);
+}
+
+.xeri-cc__action-row {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    min-height: 28px;
+    padding: var(--xeri-cc-space-xs) 0;
+}
+
+/* 같은 줄의 명령 버튼은 왼쪽 정렬로 붙이고 사이 간격만 둔다. */
+.xeri-cc__action-row > .unity-button {
+    margin: 0 var(--xeri-cc-space-sm) 0 0;
+}
+
+/* ============================================================
+   9. 진단 행
+   ============================================================ */
+.xeri-cc__issue {
+    flex-direction: row;
+    align-items: center;
+    flex-grow: 1;
+    min-width: 0;
+    min-height: var(--xeri-cc-row-height);
+    padding: 0 var(--xeri-cc-space-md);
+}
+
+.xeri-cc__issue--clickable:hover {
+    background-color: var(--xeri-cc-hover);
+}
+
+.xeri-cc__issue-icon {
+    margin-right: var(--xeri-cc-space-sm);
+}
+
+.xeri-cc__issue-title {
+    flex-shrink: 0;
+    max-width: 50%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.xeri-cc__issue-target {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    margin-left: var(--xeri-cc-space-md);
+    color: var(--xeri-cc-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.xeri-cc__issue-code {
+    flex-shrink: 0;
+    margin-left: var(--xeri-cc-space-md);
+    font-size: 10px;
+    color: var(--xeri-cc-subtle);
+}
+
+/* ============================================================
+   10. 빈 상태 안내
+   ============================================================ */
+.xeri-cc__notice {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    padding: 28px var(--xeri-cc-space-lg);
+}
+
+.xeri-cc__notice-text {
+    -unity-text-align: middle-center;
+    white-space: normal;
+    color: var(--xeri-cc-muted);
+}
+
+.xeri-cc__notice-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: var(--xeri-cc-space-md);
+}
+
+/* ============================================================
+   11. 실행 기록
+   ============================================================ */
+.xeri-cc__log-item {
+    flex-grow: 1;
+    padding-left: var(--xeri-cc-space-md);
+    -unity-text-align: middle-left;
+    font-size: var(--xeri-cc-font-small);
+    color: var(--xeri-cc-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

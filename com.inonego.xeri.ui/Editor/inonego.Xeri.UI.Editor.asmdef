@@ -3,7 +3,9 @@
     "rootNamespace": "",
     "references": [
         "inonego.Xeri",
-        "inonego.Xeri.UI"
+        "inonego.Xeri.Editor",
+        "inonego.Xeri.UI",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [
         "Editor"

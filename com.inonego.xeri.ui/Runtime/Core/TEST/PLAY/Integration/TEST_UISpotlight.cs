@@ -1037,7 +1037,7 @@ namespace inonego.Xeri.UI.TEST.Core
             var settings = ScriptableObject.CreateInstance<PanelSettings>();
             UITKTestPanelSettings.ApplyDefaultRuntimeTheme(settings);
             var output = CreatePanelOutput(host, settings);
-            var sheet = Resources.Load<StyleSheet>("Xeri/Bar/UITKBar");
+            var sheet = Resources.Load<StyleSheet>("Xeri/UI/Bar/UITKBar");
             Assert.IsNotNull(sheet);
             var container = new VisualElement();
             container.style.width = 400.0f;

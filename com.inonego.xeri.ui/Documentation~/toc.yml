@@ -6,6 +6,8 @@
     href: getting-started/installation.md
   - name: 프로젝트 설정과 시작
     href: getting-started/setup.md
+- name: 관리 도구
+  href: control-center.md
 - name: Architecture
   items:
   - name: 전체 구조

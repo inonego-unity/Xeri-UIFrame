@@ -161,7 +161,7 @@ namespace inonego.Xeri.UI.Validation
         // ------------------------------------------------------------
         internal void ApplySharedStyles(VisualElement root)
         {
-            AddStyle(root, Resources.Load<StyleSheet>("XeriUI/Theme/XeriDesktopTheme"));
+            AddStyle(root, Resources.Load<StyleSheet>("Xeri/UI/Theme/XeriDesktopTheme"));
             AddStyle(root, tokensStyle);
             AddStyle(root, componentsStyle);
         }

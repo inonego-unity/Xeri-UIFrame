@@ -105,27 +105,69 @@ namespace inonego.Xeri.UI.TEST.Core
         // ================================================================================
         private sealed class LayerRegistrationFocusDriver : FocusDriverBehaviour
         {
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 포커스 등록 요청 횟수를 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public int RegistrationCount { get; private set; } = 0;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 등록 요청에서 예외를 발생시킬지 지정한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public bool ThrowOnRegister { get; set; } = false;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 등록 해제 요청에서 예외를 발생시킬지 지정한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public bool ThrowOnUnregister { get; set; } = false;
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트에서 현재 선택된 포커스 요소를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public override object Current => null;
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 지정 요소를 포커스로 선택할 수 있는지 확인한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public override bool CanSelect(object target)
             {
                 return false;
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 포커스 또는 표시 대상의 유효성을 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public override bool IsValid(object target)
             {
                 return false;
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 지정 요소를 현재 포커스로 선택한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public override void Select(object target)
             {
                 // NONE
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 선택할 수 있는 대체 포커스 대상을 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public override object FindFallback()
             {
                 return null;
@@ -164,24 +206,73 @@ namespace inonego.Xeri.UI.TEST.Core
         // ============================================================
         private sealed class SelectionFocusDriver : FocusDriverBehaviour
         {
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트에서 선택할 대상 요소를 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public object Target { get; } = new object();
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 현재 선택값을 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public object CurrentValue { get; private set; } = null;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 선택 요청 중 실행할 검사용 콜백을 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public Action<object> Selecting { get; set; }
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 선택 시 변경 알림을 발행할지 지정한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public bool PublishOnSelect { get; set; } = false;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 선택 요청의 남은 실패 횟수를 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public int SelectFailureCount { get; set; } = 0;
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트에서 현재 선택된 포커스 요소를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public override object Current => CurrentValue;
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 지정 요소를 포커스로 선택할 수 있는지 확인한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public override bool CanSelect(object target)
             {
                 return ReferenceEquals(target, Target);
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 포커스 또는 표시 대상의 유효성을 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public override bool IsValid(object target)
             {
                 return ReferenceEquals(target, Target);
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 지정 요소를 현재 포커스로 선택한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public override void Select(object target)
             {
                 Selecting?.Invoke(target);
@@ -198,11 +289,21 @@ namespace inonego.Xeri.UI.TEST.Core
                 throw new InvalidOperationException("injected native focus failure");
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 선택할 수 있는 대체 포커스 대상을 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public override object FindFallback()
             {
                 return null;
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 검사용 포커스 선택 변경을 알린다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Publish(object target)
             {
                 CurrentValue = IsValid(target) ? target : null;
@@ -217,8 +318,18 @@ namespace inonego.Xeri.UI.TEST.Core
         // ============================================================
         private sealed class SelectReentryHandler : MonoBehaviour, ISelectHandler
         {
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 선택 요청 중 실행할 검사용 콜백을 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public Action Selecting { get; set; }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 포커스 선택 이벤트에 검사용 재진입 동작을 실행한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void OnSelect(BaseEventData eventData)
             {
                 Selecting?.Invoke();
@@ -234,6 +345,11 @@ namespace inonego.Xeri.UI.TEST.Core
         {
             private readonly List<object> validTargets = new List<object>();
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트에서 현재 선택된 포커스 요소를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public object Current
             {
                 get
@@ -249,22 +365,54 @@ namespace inonego.Xeri.UI.TEST.Core
                 private set => current = value;
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 선택을 복원할 대체 요소를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public object Fallback { get; set; }
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 선택 요청의 남은 실패 횟수를 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public int SelectFailureCount { get; set; }
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 현재 포커스 조회의 남은 실패 횟수를 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public int CurrentFailureCount { get; set; }
 
             private object current = null;
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트에서 선택 가능한 요소를 등록한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void AddValid(object target)
             {
                 validTargets.Add(target);
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 포커스 또는 표시 대상의 유효성을 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public bool IsValid(object target)
             {
                 return target != null && validTargets.Contains(target);
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 지정 요소를 현재 포커스로 선택한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Select(object target)
             {
                 if (SelectFailureCount > 0)
@@ -276,6 +424,11 @@ namespace inonego.Xeri.UI.TEST.Core
                 Current = IsValid(target) ? target : null;
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 선택할 수 있는 대체 포커스 대상을 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public object FindFallback()
             {
                 return IsValid(Fallback) ? Fallback : null;
@@ -291,14 +444,29 @@ namespace inonego.Xeri.UI.TEST.Core
         {
             private readonly List<object> targets = new List<object>();
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 화면의 기본 포커스 대상을 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public object DefaultFocus { get; }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 포커스 범위를 만든다.
+            /// </summary>
+            // ------------------------------------------------------------
             public TestFocusScope(object defaultFocus, params object[] targets)
             {
                 DefaultFocus = defaultFocus;
                 this.targets.AddRange(targets);
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 포커스 범위가 지정 요소를 포함하는지 확인한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public bool ContainsFocus(object target)
             {
                 return target != null && targets.Contains(target);

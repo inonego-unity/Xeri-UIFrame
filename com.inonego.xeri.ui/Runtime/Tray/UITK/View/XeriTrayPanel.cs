@@ -33,8 +33,8 @@ namespace inonego.Xeri.UI.Tray
 
     #region Panel 상태와 표시 요소
 
-        private const string TRAY_PANEL_UXML_PATH = "XeriUI/Tray/XeriTrayPanel";
-        private const string TRAY_PANEL_USS_PATH  = "XeriUI/Tray/XeriTrayPanelStyles";
+        private const string TRAY_PANEL_UXML_PATH = "Xeri/UI/Tray/XeriTrayPanel";
+        private const string TRAY_PANEL_USS_PATH  = "Xeri/UI/Tray/XeriTrayPanelStyles";
 
         // ------------------------------------------------------------
         /// <summary>

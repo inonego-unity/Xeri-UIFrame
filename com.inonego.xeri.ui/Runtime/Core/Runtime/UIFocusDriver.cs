@@ -31,11 +31,21 @@ namespace inonego.Xeri.UI
         {
             private readonly List<IDisposable> handles = null;
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 레이어의 포커스 연결 수명을 만든다.
+            /// </summary>
+            // ------------------------------------------------------------
             public LayerBinding(List<IDisposable> handles)
             {
                 this.handles = handles ?? throw new ArgumentNullException(nameof(handles));
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 레이어 포커스 연결을 해제한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Dispose()
             {
                 var errors = new ExceptionBuffer();

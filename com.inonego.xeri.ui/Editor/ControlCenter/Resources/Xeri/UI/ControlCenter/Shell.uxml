@@ -1,0 +1,11 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+  <ui:VisualElement name="control-center" class="xeri-cc">
+    <uie:Toolbar name="control-center-toolbar" class="xeri-cc__toolbar">
+      <ui:VisualElement name="control-center-tabs" class="xeri-cc__tabs"/>
+      <uie:ToolbarSpacer class="xeri-cc__fill"/>
+      <uie:ToolbarMenu name="control-center-settings" class="xeri-cc__settings-menu"/>
+      <uie:ToolbarButton name="control-center-validation" class="xeri-cc__validation"/>
+    </uie:Toolbar>
+    <ui:VisualElement name="control-center-pages" class="xeri-cc__pages"/>
+  </ui:VisualElement>
+</ui:UXML>

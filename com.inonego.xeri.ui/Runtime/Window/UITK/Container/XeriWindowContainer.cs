@@ -27,8 +27,8 @@ namespace inonego.Xeri.UI.Window
 
     #region Container 상태와 Registry 연결
 
-        private const string CONTAINER_UXML_PATH = "XeriUI/Window/XeriWindowContainer";
-        private const string CONTAINER_USS_PATH  = "XeriUI/Window/XeriWindowContainer";
+        private const string CONTAINER_UXML_PATH = "Xeri/UI/Window/XeriWindowContainer";
+        private const string CONTAINER_USS_PATH  = "Xeri/UI/Window/XeriWindowContainer";
 
         // ------------------------------------------------------------
         /// <summary>

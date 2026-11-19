@@ -38,7 +38,6 @@ namespace inonego.Xeri.UI.URP.Editor
 
     #region 설치 대상 확인
 
-        private const string MENU_PREFIX = "Tools/Xeri UI/URP/";
 
         // ------------------------------------------------------------
         /// <summary>
@@ -666,60 +665,6 @@ namespace inonego.Xeri.UI.URP.Editor
             EditorUtility.SetDirty(asset);
             AssetDatabase.SaveAssetIfDirty(asset);
             return true;
-        }
-
-    #endregion
-
-    #region 메뉴
-
-        [MenuItem(MENU_PREFIX + "출력 설정 미리보기", false, 2100)]
-        private static void ShowPreview()
-        {
-            EditorUtility.DisplayDialog("Xeri URP 출력 설정", Preview(ResolveSettings()), "확인");
-        }
-
-        [MenuItem(MENU_PREFIX + "출력 설정 적용", false, 2101)]
-        private static void ShowInstall()
-        {
-            var settings = ResolveSettings();
-            var preview = Preview(settings);
-            if (settings == null)
-            {
-                EditorUtility.DisplayDialog("Xeri URP 출력 설정", preview, "확인");
-                return;
-            }
-
-            if (!EditorUtility.DisplayDialog("Xeri URP 출력 설정", preview, "적용", "취소")) return;
-            try
-            {
-                var changed = InstallProject(settings);
-                EditorUtility.DisplayDialog("Xeri URP 출력 설정", changed == 0 ? "변경할 출력 설정이 없습니다." : changed + "개 URP 자산의 출력 설정을 변경했습니다.", "확인");
-            }
-            catch (Exception exception)
-            {
-                Debug.LogException(exception);
-                EditorUtility.DisplayDialog("Xeri URP 출력 설정", "변경에 실패했습니다.\n" + exception.Message, "확인");
-            }
-        }
-
-        [MenuItem(MENU_PREFIX + "출력 설정 적용 해제", false, 2102)]
-        private static void ShowUninstall()
-        {
-            var state = URPDirectOutputInstallationState.instance;
-            var count = state.FeatureChanges.Count + state.PrecisionChanges.Count;
-            var preview = "누적된 프로젝트 소유 기록 " + count + "건을 해제합니다.\n" +
-                "사용자 편집과 기존 출력 기능은 보존하며 Xeri가 변경한 설정만 복원합니다.";
-            if (!EditorUtility.DisplayDialog("Xeri URP 출력 설정", preview, "적용 해제", "취소")) return;
-            try
-            {
-                var restored = UninstallProject();
-                EditorUtility.DisplayDialog("Xeri URP 출력 설정", restored + "개 항목을 복원했습니다. 사용자 편집·삭제된 대상의 소유 기록도 정리했습니다.", "확인");
-            }
-            catch (Exception exception)
-            {
-                Debug.LogException(exception);
-                EditorUtility.DisplayDialog("Xeri URP 출력 설정", "변경에 실패했습니다.\n" + exception.Message, "확인");
-            }
         }
 
     #endregion

@@ -1,6 +1,6 @@
 /* BLOCK_HEADER_BEGIN =======================================================================
 파일명 : SplashSession.cs
-수정일 : 2026-11-08
+수정일 : 2026-11-12
 
 # 설명
 기존 Presentation Alpha Transition과 Unscaled Hold를 조합해
@@ -27,9 +27,32 @@ namespace inonego.Xeri.UI
 
     #region 상태
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 현재 스플래시 실행 단계를 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public SplashPhase Phase { get; private set; } = SplashPhase.Entering;
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 스플래시 실행 결과를 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public SplashResult? Result { get; private set; }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 마지막 실행 실패 원인을 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public Exception LastFailure { get; private set; }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 스플래시 세션이 실행 중인지 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public bool IsActive => Phase != SplashPhase.Finished;
 
         private readonly UIRuntime runtime;

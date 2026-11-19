@@ -17,6 +17,7 @@ using UnityEngine.UIElements;
 using inonego;
 using inonego.Xeri;
 using inonego.Xeri.Primitive;
+using inonego.Xeri.Serializable;
 
 namespace inonego.Xeri.UI
 {
@@ -74,6 +75,10 @@ namespace inonego.Xeri.UI
         public IReadOnlyList<PresentationDestinationDefinition> DestinationDefinitions =>
             presentationDestinations;
 
+        [CollectionEditor(Columns = new[]
+        {
+            "destinationID", "layerID"
+        })]
         [SerializeField]
         private PresentationDestinationDefinition[] presentationDestinations =
             Array.Empty<PresentationDestinationDefinition>();
@@ -183,6 +188,7 @@ namespace inonego.Xeri.UI
         // ------------------------------------------------------------
         public IReadOnlyList<string> ReleaseActionNames => releaseActionNames;
 
+        [CollectionEditor]
         [SerializeField]
         private string[] releaseActionNames =
         {

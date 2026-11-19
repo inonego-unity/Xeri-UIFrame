@@ -33,6 +33,10 @@ namespace inonego.Xeri.UI
         public int Count => stack.Count;
 
         private readonly List<ModalSession> stack = new List<ModalSession>();
+
+#if UNITY_EDITOR || DEBUG
+        internal IReadOnlyList<ModalSession> DebugStack => stack;
+#endif
         private readonly UIContext context = null;
         private readonly bool ownerControlsLifetime = false;
         private bool isDisposed = false;

@@ -24,11 +24,11 @@ namespace inonego.Xeri.UI.Window
 
     #region Window 요소와 상태
 
-        private const string WINDOW_UXML_PATH = "XeriUI/Window/XeriWindow";
-        private const string WINDOW_USS_PATH  = "XeriUI/Window/XeriWindow";
-        private const string WINDOWS_THEME_USS_PATH = "XeriUI/Window/Themes/XeriWindow.Windows";
-        private const string MAC_THEME_USS_PATH     = "XeriUI/Window/Themes/XeriWindow.Mac";
-        private const string MINIMAL_THEME_USS_PATH = "XeriUI/Window/Themes/XeriWindow.Minimal";
+        private const string WINDOW_UXML_PATH = "Xeri/UI/Window/XeriWindow";
+        private const string WINDOW_USS_PATH  = "Xeri/UI/Window/XeriWindow";
+        private const string WINDOWS_THEME_USS_PATH = "Xeri/UI/Window/Themes/XeriWindow.Windows";
+        private const string MAC_THEME_USS_PATH     = "Xeri/UI/Window/Themes/XeriWindow.Mac";
+        private const string MINIMAL_THEME_USS_PATH = "Xeri/UI/Window/Themes/XeriWindow.Minimal";
         private const float WINDOWS_ICON_SIZE       = 8f;
         private const float WINDOWS_STROKE_WIDTH    = 1.25f;
         private const float MAC_ICON_SIZE           = 5f;

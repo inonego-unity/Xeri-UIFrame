@@ -89,6 +89,8 @@ ScreenOpenResponse response = context.Screens.Open("Inventory.Home");
 
 `UIRuntime.Main`, `RootPresentation`, `SceneFader`는 Runtime-owned 서비스입니다. 기능 소비자는 개별 Screen/Modal/Window/Layer Lease만 자신이 가진 수명 경계에서 반환하고, Runtime 소유 서비스를 직접 `Dispose()`하지 않습니다.
 
+에셋 선택·편집과 로드된 씬의 Host 진단은 [Xeri UI 관리 도구](../control-center.md)에서 할 수 있습니다.
+
 ## 초기 구성 점검
 
 - 두 Bootstrapper Scene 인덱스가 모두 지정됐는가?

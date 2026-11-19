@@ -49,6 +49,11 @@ namespace inonego.Xeri.UI.HDRP.Editor.TEST
         private VolumeProfile profile;
         private HDRenderPipelineAsset pipeline;
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 렌더 출력 설치 검사에 필요한 상태를 준비한다.
+        /// </summary>
+        // ------------------------------------------------------------
         [SetUp]
         public void Setup()
         {
@@ -83,6 +88,11 @@ namespace inonego.Xeri.UI.HDRP.Editor.TEST
             SetFormat(PostProcessBufferFormat.R11G11B10);
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트가 소유한 객체와 등록 상태를 정리한다.
+        /// </summary>
+        // ------------------------------------------------------------
         [TearDown]
         public void Teardown()
         {

@@ -30,7 +30,6 @@ namespace inonego.Xeri.UI.HDRP.Editor
 
     #region 대상과 등록 목록
 
-        private const string MENU_PREFIX = "Tools/Xeri UI/HDRP/";
         private const string BEFORE_SUFFIX = ".m_BeforePostProcessCustomPostProcesses.m_CustomPostProcessTypesAsString";
         private const string AFTER_SUFFIX = ".m_AfterPostProcessCustomPostProcesses.m_CustomPostProcessTypesAsString";
 
@@ -482,7 +481,7 @@ namespace inonego.Xeri.UI.HDRP.Editor
 
     #endregion
 
-    #region 메뉴
+    #region 변경 미리보기
 
         // ------------------------------------------------------------
         /// <summary>
@@ -502,46 +501,6 @@ namespace inonego.Xeri.UI.HDRP.Editor
             text.AppendLine("카메라 후처리 또는 Custom Post Process가 꺼지면 Native 출력을 유지합니다.");
             text.AppendLine("단일 전체 화면 카메라·Linear SDR·원래 해상도만 지원합니다.");
             return text.ToString();
-        }
-
-        [MenuItem(MENU_PREFIX + "출력 설정 미리보기", false, 2300)]
-        private static void ShowPreview()
-        {
-            EditorUtility.DisplayDialog("Xeri HDRP 출력 설정", Preview(), "확인");
-        }
-
-        [MenuItem(MENU_PREFIX + "출력 설정 적용", false, 2301)]
-        private static void ShowInstall()
-        {
-            if (!EditorUtility.DisplayDialog("Xeri HDRP 출력 설정", Preview(), "적용", "취소")) return;
-            try
-            {
-                var changed = Install();
-                EditorUtility.DisplayDialog("Xeri HDRP 출력 설정", changed ? "출력 설정을 변경했습니다. 실행 취소로 되돌릴 수 있습니다." : "변경할 출력 설정이 없습니다.", "확인");
-            }
-            catch (Exception exception)
-            {
-                Debug.LogException(exception);
-                EditorUtility.DisplayDialog("Xeri HDRP 출력 설정", "변경에 실패했습니다.\n" + exception.Message, "확인");
-            }
-        }
-
-        [MenuItem(MENU_PREFIX + "출력 설정 적용 해제", false, 2302)]
-        private static void ShowUninstall()
-        {
-            var preview = "프로젝트에 기록된 Xeri 출력 설정을 해제합니다.\n" +
-                "추가한 등록과 Volume 타입을 제거하고 포맷을 복원하며 사용자 편집은 보존합니다.";
-            if (!EditorUtility.DisplayDialog("Xeri HDRP 출력 설정", preview, "적용 해제", "취소")) return;
-            try
-            {
-                var changed = Uninstall();
-                EditorUtility.DisplayDialog("Xeri HDRP 출력 설정", changed ? "출력 설정과 소유 기록의 적용을 해제했습니다." : "적용 해제할 소유 기록이 없습니다.", "확인");
-            }
-            catch (Exception exception)
-            {
-                Debug.LogException(exception);
-                EditorUtility.DisplayDialog("Xeri HDRP 출력 설정", "변경에 실패했습니다.\n" + exception.Message, "확인");
-            }
         }
 
     #endregion

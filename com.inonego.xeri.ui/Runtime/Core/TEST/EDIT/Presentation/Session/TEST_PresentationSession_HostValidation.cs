@@ -51,7 +51,18 @@ namespace inonego.Xeri.UI.TEST.Core
         // ======================================================================
         private sealed class NullDriverLayerHost : PresentationLayerHost
         {
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 자원 반환 횟수를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public int ReleaseCount { get; private set; }
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 획득 전에 실행할 검증 콜백을 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public Action Acquiring;
 
             internal override PresentationBackend Backend => PresentationBackend.UGUI;
@@ -75,7 +86,18 @@ namespace inonego.Xeri.UI.TEST.Core
         // ======================================================================
         private sealed class NullDriverPlacementHost : PresentationPlacementHost
         {
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 자원 반환 횟수를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public int ReleaseCount { get; private set; }
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 획득 전에 실행할 검증 콜백을 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public Action Acquiring;
 
             internal override PresentationBackend Backend => PresentationBackend.UGUI;
@@ -242,6 +264,11 @@ namespace inonego.Xeri.UI.TEST.Core
 
     #region 픽스처
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 테스트가 소유한 객체와 등록 상태를 정리한다.
+        /// </summary>
+        // ------------------------------------------------------------
         [TearDown]
         public void TearDown()
         {

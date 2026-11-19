@@ -1,10 +1,11 @@
 ﻿/* BLOCK_HEADER_BEGIN =======================================================================
 파일명 : PresentationLayout.cs
-수정일 : 2026-11-02
+수정일 : 2026-11-17
 
 # 설명
 Presentation scope의 Layer 정의와 Presentation placement를 직렬화한다.
 LayerOrder와 LocalOrder의 유일한 authoring source를 제공한다.
+Layer·Placement 목록은 Xeri Collection Editor의 필드 열로 저작한다.
 ========================================================================= BLOCK_HEADER_END */
 
 using System;
@@ -12,6 +13,10 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+
+using inonego;
+using inonego.Xeri;
+using inonego.Xeri.Serializable;
 
 namespace inonego.Xeri.UI
 {
@@ -29,6 +34,7 @@ namespace inonego.Xeri.UI
         /// </summary>
         // ------------------------------------------------------------
         public string LayerID => layerID;
+        [InspectorName("레이어 ID")]
         [SerializeField] private string layerID = "";
 
         // ------------------------------------------------------------
@@ -37,6 +43,7 @@ namespace inonego.Xeri.UI
         /// </summary>
         // ------------------------------------------------------------
         public string DisplayName => displayName;
+        [InspectorName("이름")]
         [SerializeField] private string displayName = "";
 
         // ------------------------------------------------------------
@@ -45,6 +52,7 @@ namespace inonego.Xeri.UI
         /// </summary>
         // ------------------------------------------------------------
         public int LayerOrder => layerOrder;
+        [InspectorName("순서")]
         [SerializeField] private int layerOrder = 0;
 
         // ------------------------------------------------------------
@@ -53,6 +61,7 @@ namespace inonego.Xeri.UI
         /// </summary>
         // ------------------------------------------------------------
         public PresentationBackend Backend => backend;
+        [InspectorName("백엔드")]
         [SerializeField] private PresentationBackend backend = PresentationBackend.UITK;
 
         // ------------------------------------------------------------
@@ -89,6 +98,7 @@ namespace inonego.Xeri.UI
         /// </summary>
         // ------------------------------------------------------------
         public string PresentationID => presentationID;
+        [InspectorName("표현 ID")]
         [SerializeField] private string presentationID = "";
 
         // ------------------------------------------------------------
@@ -97,6 +107,7 @@ namespace inonego.Xeri.UI
         /// </summary>
         // ------------------------------------------------------------
         public string LayerID => layerID;
+        [InspectorName("레이어 ID")]
         [SerializeField] private string layerID = "";
 
         // ------------------------------------------------------------
@@ -105,6 +116,7 @@ namespace inonego.Xeri.UI
         /// </summary>
         // ------------------------------------------------------------
         public int LocalOrder => localOrder;
+        [InspectorName("순서")]
         [SerializeField] private int localOrder = 0;
 
         // ------------------------------------------------------------
@@ -138,6 +150,10 @@ namespace inonego.Xeri.UI
         /// </summary>
         // ------------------------------------------------------------
         public IReadOnlyList<PresentationLayerDefinition> Layers => layers;
+        [CollectionEditor(VisibleRows = 8, Columns = new[]
+        {
+            "displayName", "layerID", "layerOrder", "backend"
+        })]
         [SerializeField] private List<PresentationLayerDefinition> layers = new();
 
         // ------------------------------------------------------------
@@ -146,6 +162,10 @@ namespace inonego.Xeri.UI
         /// </summary>
         // ------------------------------------------------------------
         public IReadOnlyList<PresentationPlacementDefinition> Placements => placements;
+        [CollectionEditor(VisibleRows = 8, Columns = new[]
+        {
+            "presentationID", "layerID", "localOrder"
+        })]
         [SerializeField] private List<PresentationPlacementDefinition> placements = new();
 
     #endregion

@@ -114,6 +114,10 @@ namespace inonego.Xeri.UI
         internal int ChildCount => children.Count;
 
         private readonly List<UIContext> children = new();
+
+#if UNITY_EDITOR || DEBUG
+        internal IReadOnlyList<UIContext> DebugChildren => children;
+#endif
         private readonly List<IDisposable> lifetimes = new();
 
         private readonly FocusController focusController = null;

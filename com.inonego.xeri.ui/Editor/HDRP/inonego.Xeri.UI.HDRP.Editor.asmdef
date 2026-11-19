@@ -3,6 +3,7 @@
     "rootNamespace": "",
     "references": [
         "inonego.Xeri.UI",
+        "inonego.Xeri.UI.Editor",
         "inonego.Xeri.UI.HDRP",
         "Unity.RenderPipelines.Core.Runtime",
         "Unity.RenderPipelines.HighDefinition.Runtime"

@@ -48,14 +48,53 @@ namespace inonego.Xeri.UI.TEST.Window
         // ============================================================
         private sealed class TestWindowDriver : IXeriWindowDriver
         {
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 UI에 적용된 알파 상태를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public PresentationAlpha Alpha { get; } = new();
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 UI의 표시 상태를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public PresentationVisibility Visibility { get; } = new();
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창의 위치를 반환하거나 설정한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public Vector2 Pos { get; set; } = Vector2.zero;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창의 크기를 반환하거나 설정한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public Vector2 Size { get; set; } = new Vector2(200f, 120f);
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창의 상태를 반환하거나 설정한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public XeriWindowState State { get; set; } = XeriWindowState.Normal;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창의 외관 상태를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public XeriWindowState VisualState { get; private set; } = XeriWindowState.Normal;
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창의 위치와 크기 영역을 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public Rect Bounds
             {
                 get => new Rect(Pos, Size);
@@ -66,22 +105,42 @@ namespace inonego.Xeri.UI.TEST.Window
                 }
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창의 확정 상태를 반영한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void CommitState(XeriWindowState state)
             {
                 State = state;
                 ApplyVisualState(state);
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창의 시각적 상태를 반영한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void ApplyVisualState(XeriWindowState state)
             {
                 VisualState = state;
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창의 위치와 크기를 반영한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void ApplyBounds(Rect bounds)
             {
                 Bounds = bounds;
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창의 최대화 영역을 적용한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void ApplyMaximizedBounds()
             {
                 // NONE
@@ -95,25 +154,56 @@ namespace inonego.Xeri.UI.TEST.Window
         // ============================================================
         private sealed class CommitGenerationAnimator : IXeriTrayReorderAnimator
         {
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 첫 항목의 전환 완료 여부를 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public XeriTrayButton CommittedFirstButton { get; private set; }
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 전환 확정 횟수를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public int CommitCount { get; private set; }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 재정렬 미리 보기 요청을 기록한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Preview(IXeriTrayReorderTarget target, XeriTrayReorderSession session)
             {
                 // NONE
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 재정렬 결과 확정 요청을 기록한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Commit(IXeriTrayReorderTarget target, XeriTrayReorderSession session)
             {
                 CommitCount++;
                 CommittedFirstButton = target.GetEntryButtons()[0];
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 재정렬 취소 요청을 기록한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Cancel(IXeriTrayReorderTarget target, XeriTrayReorderSession session)
             {
                 // NONE
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 재정렬 미리 보기 상태를 정리한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Clear(IXeriTrayReorderTarget target)
             {
                 // NONE
@@ -127,8 +217,18 @@ namespace inonego.Xeri.UI.TEST.Window
         // ============================================================
         private sealed class FaultingRegistry : IXeriWindowRegistry
         {
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 현재 활성 창의 핸들을 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public XeriWindowHandle ActiveHandle => null;
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창 등록 기록을 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public IReadOnlyList<XeriWindowRecord> Records
             {
                 get
@@ -142,13 +242,46 @@ namespace inonego.Xeri.UI.TEST.Window
                 }
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 창 등록 목록 조회에서 예외를 발생시킬지 지정한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public bool ThrowOnRecords { get; set; }
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 창 목록 변경 이벤트 구독 수를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public int CollectionHandlerCount => OnCollectionChange?.GetInvocationList().Length ?? 0;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 활성 창 변경 이벤트 구독 수를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public int ActiveHandlerCount => OnActiveChange?.GetInvocationList().Length ?? 0;
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 등록된 창 목록 변경을 알린다.
+            /// </summary>
+            // ------------------------------------------------------------
             public event EventHandler OnCollectionChange = null;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 활성 창 변경을 알린다.
+            /// </summary>
+            // ------------------------------------------------------------
             public event EventHandler<XeriWindowEventArgs> OnActiveChange = null;
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 창이 등록됐음을 알린다.
+            /// </summary>
+            // ------------------------------------------------------------
             public event EventHandler<XeriWindowEventArgs> OnRegister
             {
                 add
@@ -161,6 +294,11 @@ namespace inonego.Xeri.UI.TEST.Window
                 }
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 창이 해제됐음을 알린다.
+            /// </summary>
+            // ------------------------------------------------------------
             public event EventHandler<XeriWindowEventArgs> OnUnregister
             {
                 add
@@ -173,6 +311,11 @@ namespace inonego.Xeri.UI.TEST.Window
                 }
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 창 순서 변경을 알린다.
+            /// </summary>
+            // ------------------------------------------------------------
             public event EventHandler OnOrderChange
             {
                 add
@@ -185,9 +328,19 @@ namespace inonego.Xeri.UI.TEST.Window
                 }
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창을 등록하고 등록 이벤트를 발생시킨다.
+            /// </summary>
+            // ------------------------------------------------------------
             public XeriWindowHandle Register(string id, XeriWindowController controller)
                 => throw new NotSupportedException();
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창을 등록하고 등록 이벤트를 발생시킨다.
+            /// </summary>
+            // ------------------------------------------------------------
             public XeriWindowHandle Register
             (
                 string id,
@@ -196,9 +349,25 @@ namespace inonego.Xeri.UI.TEST.Window
             )
                 => throw new NotSupportedException();
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창의 등록을 해제한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public bool Unregister(XeriWindowHandle handle) => false;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창이 등록돼 있는지 확인한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public bool Contains(XeriWindowHandle handle) => false;
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 등록된 창 상태 기록을 찾는다.
+            /// </summary>
+            // ------------------------------------------------------------
             public bool TryGetRecord
             (
                 XeriWindowHandle handle,
@@ -209,6 +378,11 @@ namespace inonego.Xeri.UI.TEST.Window
                 return false;
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 등록된 창 제어기를 찾는다.
+            /// </summary>
+            // ------------------------------------------------------------
             public bool TryGetController
             (
                 XeriWindowHandle handle,
@@ -219,6 +393,11 @@ namespace inonego.Xeri.UI.TEST.Window
                 return false;
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 등록된 창 핸들을 찾는다.
+            /// </summary>
+            // ------------------------------------------------------------
             public bool TryGetHandle
             (
                 string id,
@@ -229,26 +408,51 @@ namespace inonego.Xeri.UI.TEST.Window
                 return false;
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창의 포커스를 활성화한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Focus(XeriWindowHandle handle)
             {
                 // NONE
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창을 비활성 상태로 전환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Deactivate(XeriWindowHandle handle)
             {
                 // NONE
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 창을 같은 계층의 맨 앞으로 이동한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void BringToFront(XeriWindowHandle handle)
             {
                 // NONE
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 창을 같은 계층의 맨 뒤로 이동한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void SendToBack(XeriWindowHandle handle)
             {
                 // NONE
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창의 겹침 계층을 변경한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void SetStackLayer
             (
                 XeriWindowHandle handle,
@@ -258,16 +462,31 @@ namespace inonego.Xeri.UI.TEST.Window
                 // NONE
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창을 일반 표시 상태로 전환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void ShowNormal(XeriWindowHandle handle)
             {
                 // NONE
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 최소화된 테스트 창을 복원한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Restore(XeriWindowHandle handle)
             {
                 // NONE
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창을 닫는다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Close(XeriWindowHandle handle)
             {
                 // NONE

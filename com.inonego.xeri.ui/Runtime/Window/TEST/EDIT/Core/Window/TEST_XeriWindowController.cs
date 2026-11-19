@@ -47,9 +47,25 @@ namespace inonego.Xeri.UI.TEST.Window
         // ============================================================
         private sealed class TestWindowDriver : IXeriWindowDriver
         {
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 UI에 적용된 알파 상태를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public PresentationAlpha Alpha { get; } = new();
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 UI의 표시 상태를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public PresentationVisibility Visibility { get; } = new();
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창의 위치를 반환하거나 설정한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public Vector2 Pos
             {
                 get => pos;
@@ -67,6 +83,11 @@ namespace inonego.Xeri.UI.TEST.Window
 
             private Vector2 pos = new Vector2(10f, 20f);
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창의 크기를 반환하거나 설정한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public Vector2 Size
             {
                 get => size;
@@ -84,13 +105,53 @@ namespace inonego.Xeri.UI.TEST.Window
 
             private Vector2 size = new Vector2(200f, 120f);
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 다음 창 위치 변경에서 예외를 발생시킬지 지정한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public bool ThrowOnNextPosSet { get; set; } = false;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 다음 창 크기 변경에서 예외를 발생시킬지 지정한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public bool ThrowOnNextSizeSet { get; set; } = false;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창의 상태를 반환하거나 설정한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public XeriWindowState State { get; set; } = XeriWindowState.Normal;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창의 외관 상태를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public XeriWindowState VisualState { get; private set; } = XeriWindowState.Normal;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창이 표시 중인지 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public bool Visible => Visibility.Modified;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 최대화 영역을 적용했는지 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public bool MaximizedBoundsApplied { get; private set; } = false;
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창의 위치와 크기 영역을 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public Rect Bounds
             {
                 get => new Rect(Pos, Size);
@@ -101,22 +162,42 @@ namespace inonego.Xeri.UI.TEST.Window
                 }
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창의 확정 상태를 반영한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void CommitState(XeriWindowState state)
             {
                 State = state;
                 ApplyVisualState(state);
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창의 시각적 상태를 반영한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void ApplyVisualState(XeriWindowState state)
             {
                 VisualState = state;
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창의 위치와 크기를 반영한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void ApplyBounds(Rect bounds)
             {
                 Bounds = bounds;
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 테스트 창의 최대화 영역을 적용한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void ApplyMaximizedBounds()
             {
                 MaximizedBoundsApplied = true;
@@ -130,14 +211,48 @@ namespace inonego.Xeri.UI.TEST.Window
         // ============================================================
         private sealed class TestTransitioner : IXeriWindowStateTransitioner
         {
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 창 상태 전환의 진행 상태를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public XeriWindowTransitionStatus Status => IsRunning
                 ? XeriWindowTransitionStatus.Running
                 : XeriWindowTransitionStatus.Idle;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 전환 애니메이션의 진행 여부를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public bool IsRunning { get; private set; } = false;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 아직 완료되지 않은 전환의 목표 상태를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public XeriWindowState? PendingState { get; private set; } = null;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 생성된 전환 요청 목록을 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public List<XeriWindowStateTransitionRequest> Requests { get; } = new();
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 다음 상태 전환에서 예외를 발생시킬지 지정한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public bool ThrowNextTransition { get; set; } = false;
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 창 상태 전환 요청을 실행하거나 기록한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public bool Transition(XeriWindowStateTransitionRequest request)
             {
                 if (ThrowNextTransition)
@@ -165,6 +280,11 @@ namespace inonego.Xeri.UI.TEST.Window
                 return true;
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 재정렬 취소 요청을 기록한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Cancel(bool restoreVisual)
             {
                 PendingState = null;
@@ -179,15 +299,43 @@ namespace inonego.Xeri.UI.TEST.Window
         // ======================================================================
         private sealed class PendingTransitioner : IXeriWindowStateTransitioner
         {
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 창 상태 전환의 진행 상태를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public XeriWindowTransitionStatus Status => IsRunning
                 ? XeriWindowTransitionStatus.Running
                 : XeriWindowTransitionStatus.Idle;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 전환 애니메이션의 진행 여부를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public bool IsRunning { get; private set; } = false;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 아직 완료되지 않은 전환의 목표 상태를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public XeriWindowState? PendingState { get; private set; } = null;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 전환 요청 횟수를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public int RequestCount { get; private set; } = 0;
 
             private XeriWindowStateTransitionRequest current = null;
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 창 상태 전환 요청을 실행하거나 기록한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public bool Transition(XeriWindowStateTransitionRequest request)
             {
                 if (IsRunning)
@@ -207,6 +355,11 @@ namespace inonego.Xeri.UI.TEST.Window
                 return true;
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 재정렬 취소 요청을 기록한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Cancel(bool restoreVisual)
             {
                 if (!IsRunning) return;
@@ -218,6 +371,11 @@ namespace inonego.Xeri.UI.TEST.Window
                 previous?.OnCancel?.Invoke();
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 보류 중인 전환을 실패로 완료한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Fail()
             {
                 if (!IsRunning) return;

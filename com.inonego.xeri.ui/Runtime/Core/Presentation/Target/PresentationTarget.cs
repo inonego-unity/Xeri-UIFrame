@@ -1,6 +1,6 @@
 /* BLOCK_HEADER_BEGIN =======================================================================
 파일명 : PresentationTarget.cs
-수정일 : 2026-11-02
+수정일 : 2026-11-12
 
 # 설명
 UI를 현재 Session의 local Layer 또는 Runtime PresentationHost destination에 표시할 대상을 정의한다.
@@ -11,6 +11,11 @@ using System;
 
 namespace inonego.Xeri.UI
 {
+    // ============================================================
+    /// <summary>
+    /// 표시 대상이 속하는 범위를 정의한다.
+    /// </summary>
+    // ============================================================
     public enum PresentationTargetScope
     {
         Local = 0,
@@ -98,26 +103,51 @@ namespace inonego.Xeri.UI
                 string.Equals(ID, other.ID, StringComparison.Ordinal);
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 다른 표시 대상과의 동등성을 비교한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public override bool Equals(object obj)
         {
             return obj is PresentationTarget other && Equals(other);
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 표시 대상의 해시 코드를 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public override int GetHashCode()
         {
             return HashCode.Combine((int)Scope, ID);
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 두 표시 대상이 같은지 비교한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public static bool operator ==(PresentationTarget left, PresentationTarget right)
         {
             return left.Equals(right);
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 두 표시 대상이 다른지 비교한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public static bool operator !=(PresentationTarget left, PresentationTarget right)
         {
             return !left.Equals(right);
         }
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 표시 대상 식별자를 문자열로 표현한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public override string ToString()
         {
             return IsValid ? $"{Scope}:{ID}" : "<invalid>";
@@ -134,9 +164,32 @@ namespace inonego.Xeri.UI
     // ============================================================
     public static class PresentationDestinationID
     {
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 일반 애플리케이션 화면의 표시 대상이다.
+        /// </summary>
+        // ------------------------------------------------------------
         public const string Application = "Application";
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 겹쳐 표시되는 콘텐츠의 표시 대상이다.
+        /// </summary>
+        // ------------------------------------------------------------
         public const string Overlay = "Overlay";
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 모달 화면에 사용하는 표시 대상이다.
+        /// </summary>
+        // ------------------------------------------------------------
         public const string Modal = "Modal";
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 시스템 화면에 사용하는 표시 대상이다.
+        /// </summary>
+        // ------------------------------------------------------------
         public const string System = "System";
     }
 }

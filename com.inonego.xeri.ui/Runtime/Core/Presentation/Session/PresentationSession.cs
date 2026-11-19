@@ -1,6 +1,6 @@
 /* BLOCK_HEADER_BEGIN =======================================================================
 파일명 : PresentationSession.cs
-수정일 : 2026-11-08
+수정일 : 2026-11-12
 
 # 설명
 Immutable PresentationPlan을 실제 Layer Output, Layer roots와 placement roots로 materialize한다.
@@ -28,17 +28,63 @@ namespace inonego.Xeri.UI
 
         private sealed class RuntimeLayer
         {
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 실제 레이어의 정의를 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public PresentationPlanLayer Plan = null;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 레이어의 표시 드라이버를 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public IPresentationLayerDriver Driver = null;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 레이어 사용 수명을 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public PresentationLayerHandle Handle = null;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 포커스 연결 수명을 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public IDisposable FocusBinding = null;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 출력 연결 해제 동작을 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public Action ReleaseMaterialization = null;
         }
 
         private sealed class RuntimePlacement
         {
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 실제 배치의 정의를 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public PresentationPlanPlacement Plan = null;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 배치에 연결된 레이어 드라이버를 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public IPresentationLayerDriver Driver = null;
+
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 배치 루트 반환 동작을 보관한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public Action ReleaseRoot = null;
         }
 
@@ -70,6 +116,11 @@ namespace inonego.Xeri.UI
             new(StringComparer.Ordinal);
         private readonly List<RuntimeLayer> layers = new();
         private readonly List<PresentationSession> children = new();
+
+#if UNITY_EDITOR || DEBUG
+        internal PresentationLayout DebugLayout { get; set; }
+        internal IReadOnlyList<PresentationSession> DebugChildren => children;
+#endif
         private readonly Func<IPresentationLayerDriver, IDisposable> bindFocus = null;
         private bool ownerControlsLifetime = false;
         private PresentationSurface embeddedSurface = null;
@@ -185,6 +236,9 @@ namespace inonego.Xeri.UI
             var child = new PresentationSession(plan, bindFocus)
             {
                 parent = this,
+#if UNITY_EDITOR || DEBUG
+                DebugLayout = layout,
+#endif
             };
 
             try
@@ -243,6 +297,9 @@ namespace inonego.Xeri.UI
             var child = new PresentationSession(plan, bindFocus)
             {
                 parent = this,
+#if UNITY_EDITOR || DEBUG
+                DebugLayout = layout,
+#endif
             };
 
             try

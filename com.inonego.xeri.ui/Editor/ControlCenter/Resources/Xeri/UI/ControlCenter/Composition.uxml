@@ -1,0 +1,49 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+  <uie:Toolbar class="xeri-cc__subbar">
+    <uie:ToolbarToggle name="composition-layouts" text="레이아웃" class="xeri-cc__subtab"/>
+    <uie:ToolbarToggle name="composition-scenes" text="씬 · 호스트" class="xeri-cc__subtab"/>
+  </uie:Toolbar>
+
+  <ui:TwoPaneSplitView name="layout-split" fixed-pane-index="0" fixed-pane-initial-dimension="320" orientation="Horizontal" class="xeri-cc__split">
+    <ui:VisualElement class="xeri-cc__list-pane">
+      <uie:Toolbar class="xeri-cc__pane-toolbar">
+        <uie:ToolbarSearchField name="layout-search" class="xeri-cc__pane-search"/>
+        <uie:ToolbarButton name="layout-create" tooltip="새 레이아웃 에셋 만들기"/>
+      </uie:Toolbar>
+      <ui:ListView name="layout-list" show-alternating-row-backgrounds="ContentOnly" fixed-item-height="52" selection-type="Single" class="xeri-cc__list"/>
+      <ui:Label name="layout-list-empty" class="xeri-cc__list-empty"/>
+    </ui:VisualElement>
+    <ui:VisualElement name="layout-detail" class="xeri-cc__detail">
+      <ui:VisualElement class="xeri-cc__detail-header">
+        <ui:Label name="layout-title" class="xeri-cc__detail-title"/>
+        <ui:Label name="layout-meta" class="xeri-cc__detail-meta"/>
+        <ui:VisualElement class="xeri-cc__fill"/>
+        <ui:Button name="layout-reveal" text="에셋 선택" class="xeri-cc__header-button"/>
+      </ui:VisualElement>
+      <ui:TwoPaneSplitView name="layout-tables" fixed-pane-index="1" fixed-pane-initial-dimension="190" orientation="Vertical" class="xeri-cc__split xeri-cc__tables">
+        <ui:VisualElement name="layout-layers" class="xeri-cc__collection-fill"/>
+        <ui:VisualElement name="layout-placements" class="xeri-cc__collection-fill"/>
+      </ui:TwoPaneSplitView>
+      <ui:VisualElement name="layout-empty" class="xeri-cc__empty-host"/>
+    </ui:VisualElement>
+  </ui:TwoPaneSplitView>
+
+  <ui:TwoPaneSplitView name="scene-split" fixed-pane-index="0" fixed-pane-initial-dimension="320" orientation="Horizontal" class="xeri-cc__split">
+    <ui:VisualElement class="xeri-cc__list-pane">
+      <uie:Toolbar class="xeri-cc__pane-toolbar">
+        <ui:Label name="scene-count" class="xeri-cc__pane-caption"/>
+      </uie:Toolbar>
+      <ui:TreeView name="scene-tree" show-alternating-row-backgrounds="ContentOnly" fixed-item-height="30" selection-type="Single" class="xeri-cc__list"/>
+      <ui:Label name="scene-list-empty" text="로드된 씬에 UI 구성 요소가 없습니다." class="xeri-cc__list-empty"/>
+    </ui:VisualElement>
+    <ui:VisualElement name="scene-detail" class="xeri-cc__detail">
+      <ui:VisualElement class="xeri-cc__detail-header">
+        <ui:Label name="scene-title" class="xeri-cc__detail-title"/>
+        <ui:Label name="scene-meta" class="xeri-cc__detail-meta"/>
+        <ui:VisualElement class="xeri-cc__fill"/>
+        <ui:Button name="scene-reveal" text="계층에서 선택" class="xeri-cc__header-button"/>
+      </ui:VisualElement>
+      <ui:ScrollView name="scene-body" class="xeri-cc__detail-body"/>
+    </ui:VisualElement>
+  </ui:TwoPaneSplitView>
+</ui:UXML>

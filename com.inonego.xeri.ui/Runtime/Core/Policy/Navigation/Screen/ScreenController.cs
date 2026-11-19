@@ -72,6 +72,10 @@ namespace inonego.Xeri.UI
         private readonly IScreenInputDriver inputDriver = null;
 
         private readonly List<ScreenSession> stack = new List<ScreenSession>();
+
+#if UNITY_EDITOR || DEBUG
+        internal IReadOnlyList<ScreenSession> DebugStack => stack;
+#endif
         private readonly List<ScreenSession> liveSessions = new List<ScreenSession>();
 
         private bool isActive = false;

@@ -56,14 +56,17 @@
     -unity-text-align: middle-left;
 }
 
+/* 항목 배지는 Core Badge이며 크기는 Badge 변수로 줄인다. 배경색은 항목 데이터(XeriTrayBadge.Color)가 정한다. */
 .xeri-tray-button__badge {
+    --xeri-badge-height: 14px;
+    --xeri-badge-padding: 3px;
+
     min-width: 14px;
-    height: 14px;
-    flex-shrink: 0;
+}
+
+/* 배지 앞 간격은 배치를 맡은 버튼이 정한다. */
+.xeri-tray-button > .xeri-tray-button__badge {
     margin-left: 4px;
-    padding-left: 3px;
-    padding-right: 3px;
-    -unity-text-align: middle-center;
 }
 
 .xeri-tray-button__close-button {

@@ -336,6 +336,9 @@ namespace inonego.Xeri.UI
                     presentationLayerHosts,
                     ownerControlsLifetime: true
                 );
+#if UNITY_EDITOR || DEBUG
+                RootPresentation.DebugLayout = settings.DefaultLayout;
+#endif
                 PresentationHost = new PresentationHost
                 (
                     RootPresentation,

@@ -27,10 +27,8 @@ The scene owns one full-screen HDR-enabled `Validation Camera`. Its settings ass
 requests high precision output with `Unaffected` post processing. Runtime UI and
 rendering use the same production `UIRuntime` policy and native rendering path.
 
-Use Unity 7 and install the active pipeline with the existing
-`Tools/Xeri UI/URP/출력 설정 미리보기` or
-`Tools/Xeri UI/HDRP/출력 설정 미리보기`, followed by the corresponding
-`출력 설정 적용` command. Pipeline installation belongs
+Use Unity 7 and install the active pipeline from the Settings > Rendering page of
+`Tools/Xeri UI/관리 도구 열기` (preview, then apply). Pipeline installation belongs
 to the host project; the scene does not replace Graphics/Quality settings or create
 pipeline features at runtime. HDRP requires camera Postprocess/Custom Post Process
 and the installed default Volume components to be active.

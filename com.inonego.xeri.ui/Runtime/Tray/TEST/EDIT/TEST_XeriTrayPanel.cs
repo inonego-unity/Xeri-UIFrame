@@ -37,8 +37,18 @@ namespace inonego.Xeri.UI.TEST.Tray
 
         private sealed class TestReorderAnimator : IXeriTrayReorderAnimator
         {
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 정리 요청에서 예외를 발생시킬지 지정한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public bool ThrowOnClear { get; set; }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 재정렬 미리 보기 요청을 기록한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Preview
             (
                 IXeriTrayReorderTarget target,
@@ -48,6 +58,11 @@ namespace inonego.Xeri.UI.TEST.Tray
                 // NONE
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 재정렬 결과 확정 요청을 기록한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Commit
             (
                 IXeriTrayReorderTarget target,
@@ -57,6 +72,11 @@ namespace inonego.Xeri.UI.TEST.Tray
                 Clear(target);
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 재정렬 취소 요청을 기록한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Cancel
             (
                 IXeriTrayReorderTarget target,
@@ -66,6 +86,11 @@ namespace inonego.Xeri.UI.TEST.Tray
                 Clear(target);
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 재정렬 미리 보기 상태를 정리한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Clear(IXeriTrayReorderTarget target)
             {
                 if (ThrowOnClear)

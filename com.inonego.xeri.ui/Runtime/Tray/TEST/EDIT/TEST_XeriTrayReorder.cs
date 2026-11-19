@@ -37,8 +37,18 @@ namespace inonego.Xeri.UI.TEST.Tray
 
         private sealed class ThrowingPreviewAnimator : IXeriTrayReorderAnimator
         {
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 미리 보기 요청 횟수를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public int PreviewCount { get; private set; }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 재정렬 미리 보기 요청을 기록한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Preview(IXeriTrayReorderTarget target, XeriTrayReorderSession session)
             {
                 PreviewCount++;
@@ -46,16 +56,31 @@ namespace inonego.Xeri.UI.TEST.Tray
                 throw new System.InvalidOperationException("preview failed");
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 재정렬 결과 확정 요청을 기록한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Commit(IXeriTrayReorderTarget target, XeriTrayReorderSession session)
             {
                 Clear(target);
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 재정렬 취소 요청을 기록한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Cancel(IXeriTrayReorderTarget target, XeriTrayReorderSession session)
             {
                 Clear(target);
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 재정렬 미리 보기 상태를 정리한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Clear(IXeriTrayReorderTarget target)
             {
                 XeriTrayReorderVisual.ClearOffsets(target);
@@ -64,8 +89,18 @@ namespace inonego.Xeri.UI.TEST.Tray
 
         private sealed class TestReorderAnimator : IXeriTrayReorderAnimator
         {
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 정리 요청 횟수를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public int ClearCount { get; private set; } = 0;
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 재정렬 미리 보기 요청을 기록한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Preview
             (
                 IXeriTrayReorderTarget target,
@@ -75,6 +110,11 @@ namespace inonego.Xeri.UI.TEST.Tray
                 // NONE
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 재정렬 결과 확정 요청을 기록한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Commit
             (
                 IXeriTrayReorderTarget target,
@@ -84,6 +124,11 @@ namespace inonego.Xeri.UI.TEST.Tray
                 // NONE
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 재정렬 취소 요청을 기록한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Cancel
             (
                 IXeriTrayReorderTarget target,
@@ -93,6 +138,11 @@ namespace inonego.Xeri.UI.TEST.Tray
                 // NONE
             }
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 재정렬 미리 보기 상태를 정리한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public void Clear(IXeriTrayReorderTarget target)
             {
                 ClearCount++;

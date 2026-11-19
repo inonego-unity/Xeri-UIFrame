@@ -3,6 +3,7 @@
     "rootNamespace": "",
     "references": [
         "inonego.Xeri.UI",
+        "inonego.Xeri.UI.Editor",
         "inonego.Xeri.UI.URP",
         "Unity.RenderPipelines.Universal.Runtime",
         "Unity.RenderPipelines.Core.Runtime"

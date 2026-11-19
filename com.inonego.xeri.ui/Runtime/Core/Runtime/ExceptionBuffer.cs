@@ -1,6 +1,6 @@
 /* BLOCK_HEADER_BEGIN =======================================================================
 파일명 : ExceptionBuffer.cs
-수정일 : 2026-11-03
+수정일 : 2026-11-12
 
 # 설명
 오류가 발생할 때만 Exception 보관 목록을 생성하고, 외부에는 읽기 전용 결과를 제공한다.
@@ -19,11 +19,28 @@ namespace inonego.Xeri.UI
     // ============================================================
     internal struct ExceptionBuffer
     {
+
+    #region 상태
+
         private List<Exception> items;
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 누적된 예외의 개수를 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public int Count => items?.Count ?? 0;
 
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 지정한 순서의 예외를 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
         public Exception this[int index] => items[index];
+
+    #endregion
+
+    #region 예외 수집
 
         // ------------------------------------------------------------
         /// <summary>
@@ -94,6 +111,10 @@ namespace inonego.Xeri.UI
             }
         }
 
+    #endregion
+
+    #region 결과 반환
+
         // ------------------------------------------------------------
         /// <summary>
         /// 오류가 없으면 공유 빈 배열, 있으면 읽기 전용 목록을 제공한다.
@@ -116,5 +137,8 @@ namespace inonego.Xeri.UI
             IEnumerable<Exception> exceptions = items;
             return new AggregateException(message, exceptions ?? Array.Empty<Exception>());
         }
+
+    #endregion
+
     }
 }

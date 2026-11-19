@@ -1,6 +1,6 @@
 /* BLOCK_HEADER_BEGIN =======================================================================
 파일명 : XeriWindowWorkspace.cs
-수정일 : 2026-11-10
+수정일 : 2026-11-12
 
 # 설명
 UI Core Child Context의 단일 Screen 위에 Xeri Window Container와 Window Session을 조립한다.
@@ -39,12 +39,22 @@ namespace inonego.Xeri.UI.Window
         // ======================================================================
         private sealed class ContainerScreenSource : IScreenSource
         {
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 콘텐츠가 표시될 컨테이너를 반환한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public XeriWindowContainer Container { get; private set; }
 
             private readonly IXeriWindowRegistry registry = null;
             private readonly IXeriWindowThemeResolver themeResolver = null;
             private Lease attachment = null;
 
+            // ------------------------------------------------------------
+            /// <summary>
+            /// 창의 콘텐츠 컨테이너를 화면 공급자로 연결한다.
+            /// </summary>
+            // ------------------------------------------------------------
             public ContainerScreenSource
             (
                 IXeriWindowRegistry registry,

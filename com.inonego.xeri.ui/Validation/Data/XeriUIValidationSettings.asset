@@ -1,3 +1,4 @@
+%UNITY 7.0
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
@@ -28,7 +29,7 @@ MonoBehaviour:
     layerID: SystemFade
   - destinationID: Splash
     layerID: Desktop.Splash
-  backendSupport: 3
+  backendSupport: -1
   highPrecisionOutput: 1
   uiPostProcessing: 0
   defaultFadeColor: {r: 0, g: 0, b: 0, a: 1}

@@ -55,7 +55,7 @@ Application Window의 Screen/Modal은 Child **local Layer**를, Root Core Lab의
 
 Validation PanelSettings는 1920×1080을 기준으로 중앙 16:9 작업 공간을 구성합니다. 상단 시스템 바와 하단 Taskbar 사이가 Window 작업 영역이며 최대화 창은 이 영역을 사용합니다.
 
-Window와 Tray는 자체 Validation용 복제품이 아니라 Xeri UI의 실제 런타임 경로를 사용합니다. 프로젝트에서 Window·UITK control의 공통 외관을 재사용하려면 `Runtime/Resources/XeriUI/Theme/XeriDesktopTheme.uss`와 `xeri-desktop-theme` 클래스를 사용할 수 있습니다. `--light`와 `--compact` 변형은 각각 밝은 외관과 조밀한 간격을 위한 modifier입니다.
+Window와 Tray는 자체 Validation용 복제품이 아니라 Xeri UI의 실제 런타임 경로를 사용합니다. 프로젝트에서 Window·UITK control의 공통 외관을 재사용하려면 `Runtime/Resources/Xeri/UI/Theme/XeriDesktopTheme.uss`와 `xeri-desktop-theme` 클래스를 사용할 수 있습니다. `--light`와 `--compact` 변형은 각각 밝은 외관과 조밀한 간격을 위한 modifier입니다.
 
 배경 Gradient는 Unity Native 렌더링을 사용하며 브라우저 CSS와 픽셀 단위의 색상 일치를 보장하지 않습니다.
 
