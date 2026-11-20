@@ -9,7 +9,7 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
 $repoRoot = $PSScriptRoot
-$packageRoot = Join-Path $repoRoot 'com.inonego.xeri.ui'
+$packageRoot = Join-Path $repoRoot 'com.inonego.xeri.uiframe'
 $apiDir = Join-Path $repoRoot '.docfx/api'
 $metadataProjectDir = Join-Path $repoRoot '.docfx/metadata-project'
 $snapshotPath = Join-Path $repoRoot 'Docs/generated-api.zip'

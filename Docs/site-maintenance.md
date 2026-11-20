@@ -1,7 +1,7 @@
-# Xeri UI 문서 사이트 유지보수
+# Xeri UIFrame 문서 사이트 유지보수
 
-이 문서는 Xeri UI의 DocFX 사이트 빌드, API Reference snapshot과 GitHub Pages 배포 파이프라인을 설명합니다.
-사용자-facing 설명은 루트 README나 `com.inonego.xeri.ui/Documentation~`에 작성하고 운영 절차는 이 문서에 둡니다.
+이 문서는 Xeri UIFrame의 DocFX 사이트 빌드, API Reference snapshot과 GitHub Pages 배포 파이프라인을 설명합니다.
+사용자-facing 설명은 루트 README나 `com.inonego.xeri.uiframe/Documentation~`에 작성하고 운영 절차는 이 문서에 둡니다.
 
 ## 구성
 
@@ -41,20 +41,20 @@ Unity 개발 환경에서 Manual과 API Reference를 함께 갱신합니다.
 ./build-docs.ps1 -UnityProjectRoot "<UnityProject>"
 ```
 
-지정한 Unity 프로젝트에는 현재 Xeri UI package가 설치되어 있어야 합니다. 문서 생성기는 `Runtime`과 `Editor`의 **모든 production `.asmdef`**를 대상으로 metadata 프로젝트를 만들기 때문에, 각 assembly의 Unity 생성 `.csproj`가 필요합니다.
+지정한 Unity 프로젝트에는 현재 Xeri UIFrame package가 설치되어 있어야 합니다. 문서 생성기는 `Runtime`과 `Editor`의 **모든 production `.asmdef`**를 대상으로 metadata 프로젝트를 만들기 때문에, 각 assembly의 Unity 생성 `.csproj`가 필요합니다.
 
 현재 필요한 프로젝트는 다음 여섯 개입니다.
 
-- `inonego.Xeri.UI.csproj`
-- `inonego.Xeri.UI.Editor.csproj`
-- `inonego.Xeri.UI.URP.csproj`
-- `inonego.Xeri.UI.URP.Editor.csproj`
-- `inonego.Xeri.UI.HDRP.csproj`
-- `inonego.Xeri.UI.HDRP.Editor.csproj`
+- `inonego.Xeri.UI.Frame.csproj`
+- `inonego.Xeri.UI.Frame.Editor.csproj`
+- `inonego.Xeri.UI.Frame.URP.csproj`
+- `inonego.Xeri.UI.Frame.URP.Editor.csproj`
+- `inonego.Xeri.UI.Frame.HDRP.csproj`
+- `inonego.Xeri.UI.Frame.HDRP.Editor.csproj`
 
 URP/HDRP 통합은 Window 테마 기능과 무관하지만, **전체 API Reference**를 생성하려면 이 assembly의 프로젝트도 준비돼야 합니다. 누락된 `.csproj`가 있으면 생성 스크립트는 오류로 종료합니다. 일부 assembly만 포함한 결과로 전체 API snapshot을 덮어쓰지 않습니다.
 
-metadata helper는 Unity 생성 프로젝트의 define과 assembly reference를 사용하고, API 대상 source를 Xeri UI package의 production Runtime/Editor에서 다시 구성합니다. Unity 프로젝트의 manifest나 source는 변경하지 않습니다.
+metadata helper는 Unity 생성 프로젝트의 define과 assembly reference를 사용하고, API 대상 source를 Xeri UIFrame package의 production Runtime/Editor에서 다시 구성합니다. Unity 프로젝트의 manifest나 source는 변경하지 않습니다.
 
 ## API snapshot
 

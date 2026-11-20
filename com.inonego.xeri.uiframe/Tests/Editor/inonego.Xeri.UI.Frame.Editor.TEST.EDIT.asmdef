@@ -1,0 +1,18 @@
+{
+    "name": "inonego.Xeri.UI.Frame.Editor.TEST.EDIT",
+    "references": [
+        "inonego.Xeri",
+        "inonego.Xeri.UI.Frame",
+        "inonego.Xeri.UI.Frame.Editor"
+    ],
+    "includePlatforms": ["Editor"],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false,
+    "optionalUnityReferences": ["TestAssemblies"]
+}

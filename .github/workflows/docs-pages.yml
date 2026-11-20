@@ -1,4 +1,4 @@
-name: Deploy Xeri UI Docs
+name: Deploy Xeri UIFrame Docs
 
 on:
   push:

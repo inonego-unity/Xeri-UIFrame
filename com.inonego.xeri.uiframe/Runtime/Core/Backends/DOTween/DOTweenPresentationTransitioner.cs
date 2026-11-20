@@ -1,0 +1,293 @@
+/* BLOCK_HEADER_BEGIN =======================================================================
+파일명 : DOTweenPresentationTransitioner.cs
+수정일 : 2026-11-08
+# 설명
+Core Presentation Transition 계약을 DOTween float tween과 취소 Handle로 구현한다.
+========================================================================= BLOCK_HEADER_END */
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+using UnityEngine;
+
+using DG;
+using DG.Tweening;
+
+namespace inonego.Xeri.UI.Frame
+{
+    // ============================================================
+    /// <summary>
+    /// DOTween 기반 Presentation Transition backend.
+    /// </summary>
+    // ============================================================
+    public sealed class DOTweenPresentationTransitioner : IPresentationTransitioner
+    {
+
+    #region 필드
+
+        private readonly Dictionary<PresentationTransitionHandle, Tween> active =
+            new Dictionary<PresentationTransitionHandle, Tween>();
+        private bool isDisposed = false;
+
+    #endregion
+
+    #region 프레젠테이션 전환 구현
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// <br/> float 진행 값을 DOTween으로 Target에 적용하고,
+        /// <br/> 정상 완료·오류·취소를 한 번만 종결하는 Handle을 반환한다.
+        /// </summary>
+        // ------------------------------------------------------------
+        public PresentationTransitionHandle Play
+        (
+            PresentationTransitionParams parameters,
+            Action onCompleted,
+            Action<Exception> onFailed
+        )
+        {
+            ThrowIfDisposed();
+
+            try
+            {
+                parameters.Target.Set(parameters.StartValue);
+            }
+            catch (Exception exception)
+            {
+                var failedHandle = new PresentationTransitionHandle(null);
+                failedHandle.Fail();
+                InvokeFailed(onFailed, exception);
+                return failedHandle;
+            }
+
+            // Target이 적용 중 Backend를 해제해도 종료 후 Tween을 생성하지 않는다.
+            ThrowIfDisposed();
+
+            if (parameters.Duration <= 0.0f)
+            {
+                var immediate = new PresentationTransitionHandle(null);
+
+                try
+                {
+                    parameters.Target.Set(parameters.EndValue);
+                }
+                catch (Exception exception)
+                {
+                    immediate.Fail();
+                    InvokeFailed(onFailed, exception);
+                    return immediate;
+                }
+
+                ThrowIfDisposed();
+                immediate.Complete();
+                InvokeCompleted(onCompleted);
+                return immediate;
+            }
+
+            var value = parameters.StartValue;
+            Tween tween = null;
+            PresentationTransitionHandle handle = null;
+            void CancelTween()
+            {
+                if (tween != null)
+                {
+                    tween.Kill(false);
+                }
+
+                // 전체 종료 중에는 활성 목록을 직접 순회한 뒤 한 번에 비운다.
+                if (handle != null && !isDisposed)
+                {
+                    active.Remove(handle);
+                }
+            }
+
+            void ApplyValue(float next)
+            {
+                if (handle != null && !handle.IsPending) return;
+
+                value = next;
+
+                try
+                {
+                    parameters.Target.Set(next);
+                }
+                catch (Exception exception)
+                {
+                    // OnKill은 외부 취소로 처리하므로 적용 실패를 먼저 확정한다.
+                    var didFail = handle != null && handle.Fail();
+                    tween?.Kill(false);
+
+                    if (didFail)
+                    {
+                        active.Remove(handle);
+                        InvokeFailed(onFailed, exception);
+                    }
+                    else
+                    {
+                        // Dispose가 먼저 Cancel한 경우에도 실제 Target 오류를 숨기지 않는다.
+                        Debug.LogException(exception);
+                    }
+                }
+            }
+
+            handle = new PresentationTransitionHandle(CancelTween);
+            tween = DOTween.To
+            (
+                () => value,
+                ApplyValue,
+                parameters.EndValue,
+                parameters.Duration
+            )
+            .SetEase(DG.Tweening.Ease.OutCubic)
+            .SetUpdate(parameters.UsesUnscaledTime)
+            .OnComplete
+            (
+                () =>
+                {
+                    // 최종 Tween 갱신 중 이미 취소·실패한 Handle에는 종료 값을 다시 적용하지 않는다.
+                    if (!handle.IsPending) return;
+
+                    try
+                    {
+                        parameters.Target.Set(parameters.EndValue);
+                    }
+                    catch (Exception exception)
+                    {
+                        if (handle.Fail())
+                        {
+                            active.Remove(handle);
+                            InvokeFailed(onFailed, exception);
+                        }
+                        else
+                        {
+                            Debug.LogException(exception);
+                        }
+
+                        return;
+                    }
+
+                    if (!handle.Complete()) return;
+
+                    active.Remove(handle);
+                    InvokeCompleted(onCompleted);
+                }
+            )
+            .OnKill
+            (
+                () =>
+                {
+                    if (handle.IsPending)
+                    {
+                        // 외부 Kill은 더 이상 실행할 Tween이 없으므로 재차 Kill하지 않는다.
+                        tween = null;
+                        handle.Cancel();
+                    }
+
+                    if (!isDisposed)
+                    {
+                        active.Remove(handle);
+                    }
+                }
+            );
+
+            active.Add(handle, tween);
+            return handle;
+        }
+
+        // ----------------------------------------------------------------------
+        /// <summary>
+        /// Backend 종료 뒤 동기 Target callback에서 돌아온 Play를 중단한다.
+        /// </summary>
+        // ----------------------------------------------------------------------
+        private void ThrowIfDisposed()
+        {
+            if (isDisposed)
+            {
+                throw new ObjectDisposedException(nameof(DOTweenPresentationTransitioner));
+            }
+        }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 완료 callback 예외를 Transition 실패로 재해석하지 않고 기록한다.
+        /// </summary>
+        // ------------------------------------------------------------
+        private static void InvokeCompleted(Action onCompleted)
+        {
+            try
+            {
+                onCompleted?.Invoke();
+            }
+            catch (Exception exception)
+            {
+                Debug.LogException(exception);
+            }
+        }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 실패 callback 예외가 DOTween 갱신을 중단하지 않게 기록한다.
+        /// </summary>
+        // ------------------------------------------------------------
+        private static void InvokeFailed
+        (
+            Action<Exception> onFailed,
+            Exception failure
+        )
+        {
+            try
+            {
+                onFailed?.Invoke(failure);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogException(exception);
+            }
+        }
+
+    #endregion
+
+    #region 수명 해제
+
+        // ----------------------------------------------------------------------
+        /// <summary>
+        /// 진행 중인 모든 DOTween Transition을 취소하고 backend를 해제한다.
+        /// </summary>
+        // ----------------------------------------------------------------------
+        public void Dispose()
+        {
+            if (isDisposed) return;
+
+            isDisposed = true;
+            var errors = new ExceptionBuffer();
+
+            try
+            {
+                foreach (var handle in active.Keys)
+                {
+                    try
+                    {
+                        handle.Cancel();
+                    }
+                    catch (Exception exception)
+                    {
+                        errors.Add(exception);
+                    }
+                }
+            }
+            finally
+            {
+                active.Clear();
+            }
+
+            if (errors.Count > 0)
+            {
+                throw errors.CreateAggregateException("DOTween Presentation Transitioner 해제가 실패했습니다.");
+            }
+        }
+
+    #endregion
+
+    }
+}

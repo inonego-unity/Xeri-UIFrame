@@ -1,21 +1,24 @@
 ---
 name: xeri-ui-test-editor-structure
-description: Xeri UI package의 runtime/editor/test assembly와 module-local TEST asmref 배치 규칙.
+description: Xeri UIFrame package의 runtime/editor/test assembly와 module-local TEST asmref 배치 규칙.
 ---
 
-# Xeri UI Test / Editor Structure
+# Xeri UIFrame Test / Editor Structure
 
 ## Production assemblies
 
-- Runtime: `com.inonego.xeri.ui/Runtime/inonego.Xeri.UI.asmdef`
-- Editor: `com.inonego.xeri.ui/Editor/inonego.Xeri.UI.Editor.asmdef`
+- Runtime: `com.inonego.xeri.uiframe/Runtime/inonego.Xeri.UI.Frame.asmdef`
+- Editor: `com.inonego.xeri.uiframe/Editor/inonego.Xeri.UI.Frame.Editor.asmdef`
+- URP/HDRP 출력: `Runtime/URP/inonego.Xeri.UI.Frame.URP.asmdef`, `Runtime/HDRP/inonego.Xeri.UI.Frame.HDRP.asmdef`, `Editor/URP/inonego.Xeri.UI.Frame.URP.Editor.asmdef`, `Editor/HDRP/inonego.Xeri.UI.Frame.HDRP.Editor.asmdef`
+- Validation: `Validation/Runtime/inonego.Xeri.UI.Frame.Validation.asmdef`
 - Editor 전용 production source를 Runtime 모듈 옆에 둘 때 `Runtime/{module}/Editor/Editor.asmref`로 Editor assembly에 연결합니다.
 
 ## Test assemblies
 
-- EditMode: `Tests/EDIT/inonego.Xeri.UI.TEST.EDIT.asmdef`
-- PlayMode: `Tests/PLAY/inonego.Xeri.UI.TEST.PLAY.asmdef`
-- Editor-specific EditMode: `Tests/Editor/inonego.Xeri.UI.Editor.TEST.EDIT.asmdef`
+- EditMode: `Tests/EDIT/inonego.Xeri.UI.Frame.TEST.EDIT.asmdef`
+- PlayMode: `Tests/PLAY/inonego.Xeri.UI.Frame.TEST.PLAY.asmdef`
+- Editor-specific EditMode: `Tests/Editor/inonego.Xeri.UI.Frame.Editor.TEST.EDIT.asmdef`
+- URP/HDRP Editor EditMode: `Tests/Editor/URP/inonego.Xeri.UI.Frame.URP.Editor.TEST.EDIT.asmdef`, `Tests/Editor/HDRP/inonego.Xeri.UI.Frame.HDRP.Editor.TEST.EDIT.asmdef`
 
 ## Module-local tests
 
@@ -30,9 +33,9 @@ Runtime/{module}/TEST/Editor/
 각 폴더는 asmdef를 새로 만들지 않고 assembly 이름을 직접 지정하는 asmref를 사용합니다.
 
 ```json
-{ "reference": "inonego.Xeri.UI.TEST.EDIT" }
-{ "reference": "inonego.Xeri.UI.TEST.PLAY" }
-{ "reference": "inonego.Xeri.UI.Editor.TEST.EDIT" }
+{ "reference": "inonego.Xeri.UI.Frame.TEST.EDIT" }
+{ "reference": "inonego.Xeri.UI.Frame.TEST.PLAY" }
+{ "reference": "inonego.Xeri.UI.Frame.Editor.TEST.EDIT" }
 ```
 
 GUID 기반 asmref를 사용하지 않습니다.

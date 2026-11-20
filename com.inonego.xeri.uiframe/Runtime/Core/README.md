@@ -1,0 +1,25 @@
+# Xeri UIFrame Core
+
+이 폴더는 UIFrame 핵심인 Presentation, Screen, Modal, Focus/Input과 Runtime composition을 구현합니다. Window, Tray, 관리 도구를 참조하지 않으며, 이들이 이 폴더 위에서 동작합니다.
+
+주요 코드 영역:
+
+```text
+Runtime/Core/Runtime        UIRuntime / UIContext
+Runtime/Core/Presentation   Layout / Plan / Session / Host / Target
+Runtime/Core/Layer          Layer driver / registry / lease / surface
+Runtime/Core/Policy         Screen / Modal
+Runtime/Core/Interaction    Focus / input policy
+Runtime/Core/Backends       UGUI / UITK / InputSystem adapter
+```
+
+사용법:
+
+- [Core 개요](../../Documentation~/core/index.md)
+- [Screen과 입력](../../Documentation~/core/screens.md)
+- [Presentation](../../Documentation~/core/presentation.md)
+
+구조 계약:
+
+- [Presentation Architecture](../../Documentation~/architecture/presentation.md)
+- [Presentation Composition Contract](../../Documentation~/architecture/presentation-composition.md)

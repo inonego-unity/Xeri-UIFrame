@@ -1,0 +1,13 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement name="Overlay" class="xeri-debug-remote">
+        <ui:VisualElement class="xeri-debug-remote__header">
+            <ui:Label text="Xeri UIFrame 진단" class="xeri-debug-remote__title"/>
+            <ui:VisualElement class="xeri-debug-remote__spacer"/>
+            <ui:Button name="Hide" text="닫기"/>
+        </ui:VisualElement>
+        <ui:ScrollView name="Entries" class="xeri-debug-remote__content"/>
+        <ui:VisualElement class="xeri-debug-remote__footer">
+            <ui:Button name="CloseScreen" text="최상단 화면 닫기"/>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

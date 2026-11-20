@@ -1,0 +1,207 @@
+# Xeri UIFrame Architecture
+
+Xeri UIFrame은 Unity UI Toolkit/UGUI를 대체하는 renderer가 아니다.
+Unity의 rendering, event dispatch, native focus와 authoring을 사용하면서
+application-level topology, lifecycle과 authority를 관리한다.
+
+## 문서 사용
+
+이 페이지는 Xeri UIFrame의 책임·구성 단위를 설명합니다. 실제 프로젝트에 설치하고 시작하려면 [프로젝트 설정과 시작](../getting-started/setup.md)을 사용합니다.
+
+- [Presentation Architecture](presentation.md): Layout/Plan, materialization, Session, Focus/Input의 상세 불변식
+- [Presentation Composition Contract](presentation-composition.md): Target 해석, Layer Lease, Host, Scene-authored Layer 계약
+- [UIFrame 핵심](../core/index.md), [Window](../window/index.md)(선택 모듈): 일반 사용자가 호출할 API와 반환해야 할 수명
+
+## 모듈 경계
+
+UIFrame은 핵심과 선택 모듈, 도구로 나뉜다.
+
+| 구분 | 구성 | 의존 방향 |
+|---|---|---|
+| UIFrame 핵심 | `UIRuntime`, `UIContext`, Presentation, Screen, Modal, Focus, Input, Scene Fade, Splash, Spotlight, Backend | Xeri Core만 사용 |
+| 선택 모듈 | Window, Tray | UIFrame 핵심 위에서 동작(핵심은 이 둘을 참조하지 않음). Window가 Tray를 사용하고 Tray는 Window를 참조하지 않음 |
+| 도구 | 관리 도구, 게임 내 진단 창 | UIFrame 핵심을 조회 |
+
+개별 UI 컨트롤(Picker, Popup, Drag & Drop, Bar 등)은 Xeri Core가 소유한다. UIFrame은 그중 일부를 사용하지만 컨트롤은 UIFrame을 알지 못한다.
+
+## 현재 핵심 구조
+
+    PresentationLayout
+    → immutable PresentationPlan
+    → PresentationSession
+
+    UIRuntime
+    ├─ PresentationHost
+    └─ UIContext
+       ├─ Screen
+       ├─ Modal
+       ├─ Focus
+       └─ Input authority
+
+현재 PresentationSession은 local topology와 placement materialization을 소유하고,
+Child PresentationSession으로 nested UI world를 구성한다.
+
+UIContext는 navigation/modality/focus/input authority를 소유한다.
+
+Window local child composition에서는 UIContext ownership tree와 PresentationSession containment를 함께 사용한다.
+non-local Overlay/Modal은 Host target으로 resolve하므로 이 physical containment를 요구하지 않는다.
+
+## Composition 축
+
+Target/Layer Lease composition에서도 활성 Plan은 mutable graph가 아니다.
+
+    logical ownership
+        UIContext
+
+    local topology
+        PresentationSession + immutable Plan
+
+    requested destination
+        PresentationTarget
+
+    resolved Layer usage
+        PresentationLayerLease
+
+    app-wide destination resolver
+        PresentationHost
+
+기본 semantic destination은 다음과 같다.
+
+- Application
+- Overlay
+- Modal
+- System
+
+transient UI를 위해 Root Layout에 fixed placement를 미리 예약하지 않는다.
+필요한 UI는 `PresentationTarget`을 resolve해 해당 Layer의 사용 수명을 획득한다.
+
+## 책임 경계
+
+| 책임 | 의미 |
+|---|---|
+| Definition | local UI world에 무엇이 존재하고 어떤 순서인지 정의 |
+| Session | immutable Plan의 활성 materialization/lifetime 소유 |
+| Context | navigation, modality, focus, input과 logical ownership 소유 |
+| Target | local Layer 또는 app-wide destination을 요청하는 논리적 표시 대상 |
+| Layer Lease | resolve된 Layer의 consumer lifetime 소유 |
+| Host | app-wide destination을 Root Session Layer로 resolve |
+| Source | View를 어디서 acquire/release하는지 소유 |
+| Backend | UITK/UGUI native output, focus/input adapter 제공 |
+
+`PresentationHost`와 `PresentationLayerLease`는 Project Composition API다.
+
+## Presentation ordering
+
+ordering domain을 서로 추론하지 않는다.
+
+    Host destination identity
+    != Presentation LayerOrder
+    != Presentation LocalOrder
+    != Window instance z-order
+    != Focus precedence
+    != Context authority
+
+LayerOrder와 LocalOrder는 Session-local Presentation topology의 값이다.
+
+Host destination 자체에는 별도 ordering graph가 없다. 실제 backend order는 destination이 가리키는 Root Layer의 `LayerOrder`가 결정한다.
+
+## Scene-authored UI
+
+현재 PresentationLayerHost와 PresentationPlacementHost는
+Session Plan의 physical materialization을 명시적으로 제공한다.
+
+Scene global implicit discovery는 하지 않는다.
+
+app-wide Host destination mapping은 `UISettingsAsset`의
+`PresentationDestinationDefinition`이 소유하며 Session-local Scene Host와 분리한다.
+
+    PresentationHost destination
+    != PresentationPlan Layer identity
+
+## Screen / Modal / transient UI
+
+Screen identity와 표시 target은 분리되어 있다.
+
+    Screen identity
+    != PresentationTarget
+    != Presentation destination
+    != Layer identity
+
+ModalController는 Presentation/Interaction/Focus 책임을 분리하고,
+Tier 1 helper는 `PresentationTarget`을 받아 내부에서 `UIContext.AcquireLayer`로 실제 Layer를 획득한다.
+
+Drag Visual, Modal, Scene Fade 같은 transient/system UI는
+고정 Root placement 대신 명시적 Local/Host target을 사용한다.
+
+## Focus와 Input
+
+Focus precedence는 numeric priority가 아니라 ownership이다.
+
+    Override.Top
+    → Primary
+    → Base
+
+Gameplay Input과 Cursor policy는 effective Context path와 Screen ownership을 기준으로 합성한다.
+
+presentation destination의 앞뒤 순서를 Focus/Input priority로 사용하지 않는다.
+
+backend infrastructure capability는 active composition과 분리되어 있다.
+
+Runtime은 `UISettingsAsset.BackendSupport`로 지원 backend를 bootstrap에서 검증하고,
+active Layout만 보고 mixed EventSystem 필요 여부를 추론하지 않는다.
+
+## Window
+
+선택 모듈인 Window는 Presentation 위에 별도의 application-level window semantics를 제공한다.
+
+- move / resize
+- minimize / maximize / restore
+- focus / close
+- instance z-order
+- optional AlwaysOnTop stack group
+- persistence record
+- Window USS 테마 (내장 Windows/Mac/Minimal 및 등록된 커스텀 USS)
+- Simple Window
+- Application Window
+
+Window의 Theme ID는 Panel이 적용하고 Controller가 현재 값을 제공하며 Registry의 Record snapshot에 반영합니다. 외관 변경과 저장 상태를 별도 경로에서 중복 관리하지 않습니다. 사용 계약은 [Window](../window/index.md)에 설명합니다.
+
+Application Window는 ContentRoot 안에서 Child PresentationSession + Child UIContext 모델을 사용한다.
+
+이 local embedded composition은 Host target 기반의 non-local Layer 획득으로 대체할 대상이 아니다.
+
+## Public API 방향
+
+Golden Path는 UIRuntime, UIContext, Screen/Presentation/Modal facade와
+XeriWindowWorkspace에서 시작한다.
+
+다음 progressive disclosure를 따른다.
+
+    Tier 1 — Feature / Golden Path
+            ↓
+    Tier 2 — Project Composition
+            ↓
+    Tier 3 — Backend Extension
+
+`PresentationTarget`은 Golden Path의 표시 대상 vocabulary다.
+Project Composition에는 `PresentationHost`, `PresentationLayerLease`, `AcquireLayer` 계열 API가 포함된다.
+일반 사용자가 native Panel/Canvas ordering을 직접 관리하는 Golden Path는 만들지 않는다.
+
+Convenience API는 하위 primitive를 조합하는 얇은 facade이며
+별도 state/order/lifetime source of truth를 만들지 않는다.
+
+## 설계 원칙
+
+- immutable local Plan을 유지한다.
+- local Child Session과 Host target 기반의 non-local Layer 획득을 구분한다.
+- logical ownership과 physical placement를 같은 tree로 강제하지 않는다.
+- Unity native 기능으로 동일 contract를 만족하면 중복 subsystem을 만들지 않는다.
+- rollback/terminal lifetime semantics를 composition 확장에서도 유지한다.
+- Tier 1 API와 Project Composition/static authored Placement 경계를 문서에서 명확히 구분한다.
+
+## 더 자세히
+
+- [Presentation Architecture](presentation.md)
+- [Presentation Composition Contract](presentation-composition.md)
+- [UIFrame 핵심 개요](../core/index.md)
+- [Window](../window/index.md)

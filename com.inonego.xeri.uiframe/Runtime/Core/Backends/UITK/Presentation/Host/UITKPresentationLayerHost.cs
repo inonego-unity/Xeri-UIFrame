@@ -1,0 +1,402 @@
+/* BLOCK_HEADER_BEGIN =======================================================================
+파일명 : UITKPresentationLayerHost.cs
+수정일 : 2026-11-02
+
+# 설명
+Scene-authored UITK Layer의 PanelRenderer output과 VisualElementReference ManagedRoot를 Presentation Layer로 제공한다.
+PanelRenderer visual tree의 authored static content는 유지하고 ManagedRoot subtree만 Xeri runtime placement 영역으로 사용한다.
+========================================================================= BLOCK_HEADER_END */
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+using UnityEngine;
+using UnityEngine.UIElements;
+
+namespace inonego.Xeri.UI.Frame
+{
+    // ============================================================
+    /// <summary>
+    /// Scene-authored UITK Layer materialization Host.
+    /// </summary>
+    // ============================================================
+    [DisallowMultipleComponent]
+    [RequireComponent(typeof(PanelRenderer))]
+    [RequireComponent(typeof(UITKPresentationOutput))]
+    public sealed class UITKPresentationLayerHost : PresentationLayerHost
+    {
+
+    #region 필드
+
+        // --------------------------------------------------------------------------------
+        /// <summary>
+        /// Xeri가 Placement Root ordering/lifetime을 관리할 authored subtree reference.
+        /// </summary>
+        // --------------------------------------------------------------------------------
+        public VisualElementReference ManagedRootReference => managedRootReference;
+
+        [SerializeField]
+        private VisualElementReference managedRootReference = new();
+
+        internal override PresentationBackend Backend => PresentationBackend.UITK;
+
+        private VisualElement managedRoot = null;
+        private UITKPresentationLayer driver = null;
+        private UITKPresentationOutput boundOutput = null;
+        private bool resolvedCallbackRegistered = false;
+        private bool unloadedCallbackRegistered = false;
+
+    #endregion
+
+    #region 획득과 대여 상태 반환
+
+        // ----------------------------------------------------------------------
+        /// <summary>
+        /// Scene UITK Layer를 borrow하고 ManagedRoot Driver를 반환한다.
+        /// </summary>
+        // ----------------------------------------------------------------------
+        internal override IPresentationLayerDriver AcquireCore
+        (
+            PresentationPlanLayer plan,
+            out Action release
+        )
+        {
+            var output = GetComponent<UITKPresentationOutput>() ??
+                throw new MissingComponentException
+                (
+                    $"UITK Layer Host '{LayerID}'에 UITKPresentationOutput이 없습니다."
+                );
+            var panelRenderer = output.PanelRenderer;
+
+            if
+            (
+                panelRenderer == null ||
+                managedRootReference.panelRenderer != panelRenderer
+            )
+            {
+                throw new InvalidOperationException
+                (
+                    $"UITK Layer Host '{LayerID}' ManagedRoot reference는 " +
+                    "같은 GameObject의 PanelRenderer를 가리켜야 합니다."
+                );
+            }
+
+            var hostObject = gameObject;
+            var originalActive = hostObject.activeSelf;
+
+            try
+            {
+                boundOutput = output;
+                boundOutput.RootUpdated += HandleOutputRootUpdated;
+                output.InitializeBorrowed(plan.LayerOrder);
+                hostObject.SetActive(true);
+                var layerRoot = output.RequireRoot();
+
+                RegisterReferenceCallbacks();
+                var resolvedManagedRoot = RequireManagedRoot(layerRoot);
+                driver = new UITKPresentationLayer(resolvedManagedRoot);
+                release = () => ReleaseBorrowedState(output, hostObject, originalActive);
+                return driver;
+            }
+            catch (Exception exception)
+            {
+                try
+                {
+                    ReleaseBorrowedState(output, hostObject, originalActive);
+                }
+                catch (Exception cleanupException)
+                {
+                    throw new AggregateException
+                    (
+                        $"UITK Layer Host '{LayerID}' materialization과 rollback이 실패했습니다.",
+                        exception,
+                        cleanupException
+                    );
+                }
+
+                throw;
+            }
+        }
+
+        // --------------------------------------------------------------------------------
+        /// <summary>
+        /// <br/> Borrowed output state, reference callback과 GameObject active 상태를
+        /// <br/> 모두 복원한다.
+        /// </summary>
+        // --------------------------------------------------------------------------------
+        private void ReleaseBorrowedState
+        (
+            UITKPresentationOutput output,
+            GameObject hostObject,
+            bool originalActive
+        )
+        {
+            var errors = new ExceptionBuffer();
+
+            try
+            {
+                UnregisterReferenceCallbacks();
+            }
+            catch (Exception exception)
+            {
+                errors.Add(exception);
+            }
+
+            try
+            {
+                if (output != null)
+                {
+                    output.ReleaseOutputState();
+                }
+            }
+            catch (Exception exception)
+            {
+                errors.Add(exception);
+            }
+
+            if (hostObject != null)
+            {
+                try
+                {
+                    hostObject.SetActive(originalActive);
+                }
+                catch (Exception exception)
+                {
+                    errors.Add(exception);
+                }
+            }
+
+            if (errors.Count == 0) return;
+
+            if (errors.Count == 1)
+            {
+                throw errors[0];
+            }
+
+            throw errors.CreateAggregateException
+            (
+                $"UITK Layer Host '{LayerID}' borrowed state 복원이 실패했습니다."
+            );
+        }
+
+    #endregion
+
+    #region 관리 루트 검증과 참조 구독
+
+        // ----------------------------------------------------------------------
+        /// <summary>
+        /// resolved ManagedRoot가 현재 LayerRoot 아래의 별도 subtree인지 검증한다.
+        /// </summary>
+        // ----------------------------------------------------------------------
+        private VisualElement RequireManagedRoot(VisualElement layerRoot)
+        {
+            if
+            (
+                managedRoot == null ||
+                ReferenceEquals(managedRoot, layerRoot) ||
+                !layerRoot.Contains(managedRoot)
+            )
+            {
+                throw new InvalidOperationException
+                (
+                    $"UITK Layer Host '{LayerID}'의 ManagedRoot는 " +
+                    "PanelRenderer LayerRoot 아래의 별도 subtree여야 합니다."
+                );
+            }
+
+            return managedRoot;
+        }
+
+        // ----------------------------------------------------------------------
+        /// <summary>
+        /// ManagedRoot reference의 resolve/unload lifecycle을 구독한다.
+        /// </summary>
+        // ----------------------------------------------------------------------
+        private void RegisterReferenceCallbacks()
+        {
+            if (resolvedCallbackRegistered && unloadedCallbackRegistered) return;
+
+            var errors = new ExceptionBuffer();
+
+            try
+            {
+                if (!resolvedCallbackRegistered)
+                {
+                    // accessor가 구독 후 throw해도 rollback 대상임을 먼저 기록한다.
+                    resolvedCallbackRegistered = true;
+                    managedRootReference.RegisterReferenceResolvedCallback
+                    (
+                        HandleManagedRootResolved
+                    );
+                }
+
+                if (!unloadedCallbackRegistered)
+                {
+                    unloadedCallbackRegistered = true;
+                    managedRootReference.RegisterReferenceUnloadedCallback
+                    (
+                        HandleManagedRootUnloaded
+                    );
+                }
+
+                return;
+            }
+            catch (Exception exception)
+            {
+                errors.Add(exception);
+            }
+
+            try
+            {
+                UnregisterReferenceCallbacks();
+            }
+            catch (Exception cleanupException)
+            {
+                errors.Add(cleanupException);
+            }
+
+            if (errors.Count == 1)
+            {
+                throw errors[0];
+            }
+
+            throw errors.CreateAggregateException
+            (
+                "UITK Layer Host reference callback 등록과 롤백이 모두 실패했습니다."
+            );
+        }
+
+        // --------------------------------------------------------------------------------
+        /// <summary>
+        /// ManagedRoot reference 구독과 cached element를 역순 attempt-all로 해제한다.
+        /// </summary>
+        // --------------------------------------------------------------------------------
+        private void UnregisterReferenceCallbacks()
+        {
+            var errors = new ExceptionBuffer();
+
+            if (!ReferenceEquals(boundOutput, null))
+            {
+                boundOutput.RootUpdated -= HandleOutputRootUpdated;
+                boundOutput = null;
+            }
+
+            try
+            {
+                driver?.RebindRoot(null);
+            }
+            catch (Exception exception)
+            {
+                errors.Add(exception);
+            }
+
+            driver = null;
+
+            if (unloadedCallbackRegistered)
+            {
+                unloadedCallbackRegistered = false;
+
+                try
+                {
+                    managedRootReference.UnregisterReferenceUnloadedCallback
+                    (
+                        HandleManagedRootUnloaded
+                    );
+                }
+                catch (Exception exception)
+                {
+                    errors.Add(exception);
+                }
+            }
+
+            if (resolvedCallbackRegistered)
+            {
+                resolvedCallbackRegistered = false;
+
+                try
+                {
+                    managedRootReference.UnregisterReferenceResolvedCallback
+                    (
+                        HandleManagedRootResolved
+                    );
+                }
+                catch (Exception exception)
+                {
+                    errors.Add(exception);
+                }
+            }
+
+            managedRoot = null;
+
+            if (errors.Count == 0) return;
+
+            if (errors.Count == 1)
+            {
+                throw errors[0];
+            }
+
+            throw errors.CreateAggregateException
+            (
+                "UITK Layer Host reference callback 해제가 실패했습니다."
+            );
+        }
+
+    #endregion
+
+    #region 이벤트 핸들러
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// authored 참조와 런타임 콘텐츠를 현재 ManagedRoot에 함께 연결한다.
+        /// </summary>
+        // ------------------------------------------------------------
+        private void HandleManagedRootResolved(VisualElement element)
+        {
+            managedRoot = element;
+            RefreshManagedRoot();
+        }
+
+        private void HandleOutputRootUpdated(VisualElement root)
+        {
+            RefreshManagedRoot();
+        }
+
+        private void RefreshManagedRoot()
+        {
+            if (driver == null) return;
+            var layerRoot = boundOutput?.Root;
+            // Native 참조 resolve는 Output 루트 갱신보다 먼저 올 수 있다.
+            var ready = layerRoot != null && managedRoot != null &&
+                !ReferenceEquals(layerRoot, managedRoot) && layerRoot.Contains(managedRoot);
+            driver.RebindRoot(ready ? managedRoot : null);
+        }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// authored 참조가 unload되면 콘텐츠를 분리하고 현재 루트를 비운다.
+        /// </summary>
+        // ------------------------------------------------------------
+        private void HandleManagedRootUnloaded(VisualElement element)
+        {
+            if (ReferenceEquals(managedRoot, element))
+            {
+                managedRoot = null;
+                driver?.RebindRoot(null);
+            }
+        }
+
+        // ----------------------------------------------------------------------
+        /// <summary>
+        /// Host 파괴 경계에서 VisualElementReference callback을 해제한다.
+        /// </summary>
+        // ----------------------------------------------------------------------
+        private void OnDestroy()
+        {
+            UnregisterReferenceCallbacks();
+        }
+
+    #endregion
+
+    }
+}

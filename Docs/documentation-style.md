@@ -1,6 +1,6 @@
-# Xeri UI 문서 작성 규칙
+# Xeri UIFrame 문서 작성 규칙
 
-Xeri UI 문서는 완성된 제품의 구조와 사용법을 현재형으로 설명합니다. 변경 이력이나 migration 과정은 공개 Manual에 섞지 않습니다.
+Xeri UIFrame 문서는 완성된 제품의 구조와 사용법을 현재형으로 설명합니다. 변경 이력이나 migration 과정은 공개 Manual에 섞지 않습니다.
 
 ## Source of truth
 
@@ -10,9 +10,12 @@ Xeri UI 문서는 완성된 제품의 구조와 사용법을 현재형으로 설
 Documentation~/
 ├─ getting-started/   설치와 최초 구성
 ├─ architecture/      안정된 구조와 invariant
-├─ core/              Core 기능 사용법
-├─ window/            Window 기능 사용법
-├─ tray.md            Tray 사용법
+├─ core/              UIFrame 핵심 기능 사용법
+├─ window/            Window(선택 모듈) 사용법
+├─ tray.md            Tray(선택 모듈) 사용법
+├─ control-center.md  관리 도구
+├─ validation.md      Validation Desktop
+├─ xeri-ui-system-explained.html  UIFrame 입문 안내서
 └─ guides/            특정 작업 절차
 
 Docs/
@@ -27,7 +30,7 @@ C# XML docs           API Reference source
 
 ## 공개 Manual
 
-`com.inonego.xeri.ui/Documentation~/`가 사용자-facing Manual의 source of truth입니다.
+`com.inonego.xeri.uiframe/Documentation~/`가 사용자-facing Manual의 source of truth입니다.
 
 공개 문서는 다음 원칙을 따릅니다.
 
@@ -92,9 +95,9 @@ Architecture 문서는 migration plan이나 작업 완료 상태를 참조하지
 
 ## 용어
 
-- 제품명: `Xeri UI`
-- package: `com.inonego.xeri.ui`
-- runtime assembly: `inonego.Xeri.UI`
+- 제품명: `Xeri UIFrame`
+- package: `com.inonego.xeri.uiframe`
+- runtime assembly: `inonego.Xeri.UI.Frame`
 - 코드 타입/멤버/파일명은 백틱으로 표기
 - `Runtime`, `Context`, `Session`, `Lease`, `Handle`, `Screen`, `Window`처럼 코드 의미와 직접 대응하는 용어는 억지로 번역하지 않음
 
@@ -102,9 +105,9 @@ Architecture 문서는 migration plan이나 작업 완료 상태를 참조하지
 
 ## Base Xeri와의 경계
 
-범용 `Lease`, primitive, serialization, Bootstrapper, Drag/Drop과 Picker는 base `com.inonego.xeri`가 소유합니다.
+범용 `Lease`, primitive, serialization, Bootstrapper와 개별 UI 컨트롤(Drag & Drop, Picker, Popup, Bar 등, `inonego.Xeri.UI`)은 base `com.inonego.xeri`가 소유합니다.
 
-Xeri UI 문서는 해당 기능을 자체 소유 API처럼 재정의하지 않고 UI domain에서 어떻게 소비하는지만 설명합니다.
+Xeri UIFrame 문서는 해당 기능을 자체 소유 API처럼 재정의하지 않고 UI domain에서 어떻게 소비하는지만 설명합니다.
 
 ## 링크와 목차
 

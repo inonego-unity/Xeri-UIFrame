@@ -1,0 +1,15 @@
+{
+  "name": "com.inonego.xeri.uiframe",
+  "version": "0.0.1",
+  "displayName": "Xeri UIFrame",
+  "description": "Xeri UIFrame: application UI frame (Screen, Modal, Focus, Input, Presentation) with optional Window and Tray modules.",
+  "unity": "7000.0",
+  "author": {
+    "name": "inonego"
+  },
+  "dependencies": {
+    "com.inonego.xeri": "0.0.1",
+    "com.unity.inputsystem": "6.7.0",
+    "com.unity.ugui": "7.0.0"
+  }
+}

@@ -1,0 +1,80 @@
+/* BLOCK_HEADER_BEGIN =======================================================================
+파일명: XeriTrayReorderRequest.cs
+수정일 : 2026-11-02
+
+# 설명
+Tray entry reorder 확정 요청 값을 표현한다.
+========================================================================= BLOCK_HEADER_END */
+
+using System;
+using inonego.Xeri.UI.Frame;
+
+namespace inonego.Xeri.UI.Tray
+{
+    // ============================================================
+    /// <summary>
+    /// Tray entry reorder 확정 요청.
+    /// </summary>
+    // ============================================================
+    public readonly struct XeriTrayReorderRequest
+    {
+
+    #region 필드
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 이동할 Tray entry.
+        /// </summary>
+        // ------------------------------------------------------------
+        public XeriTrayEntry Entry { get; }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 이동 전 entry index.
+        /// </summary>
+        // ------------------------------------------------------------
+        public int SourceIndex { get; }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 이동 후 entry index.
+        /// </summary>
+        // ------------------------------------------------------------
+        public int TargetIndex { get; }
+
+    #endregion
+
+    #region 생성자
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// Tray reorder 요청 값을 생성한다.
+        /// </summary>
+        // ------------------------------------------------------------
+        public XeriTrayReorderRequest
+        (
+            XeriTrayEntry entry,
+            int sourceIndex,
+            int targetIndex
+        )
+        {
+            Entry = entry ?? throw new ArgumentNullException(nameof(entry));
+
+            if (sourceIndex < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(sourceIndex));
+            }
+
+            if (targetIndex < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(targetIndex));
+            }
+
+            SourceIndex = sourceIndex;
+            TargetIndex = targetIndex;
+        }
+
+    #endregion
+
+    }
+}

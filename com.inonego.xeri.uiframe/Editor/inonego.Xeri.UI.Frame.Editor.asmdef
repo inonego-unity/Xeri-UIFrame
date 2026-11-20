@@ -1,0 +1,21 @@
+{
+    "name": "inonego.Xeri.UI.Frame.Editor",
+    "rootNamespace": "",
+    "references": [
+        "inonego.Xeri",
+        "inonego.Xeri.Editor",
+        "inonego.Xeri.UI.Frame",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

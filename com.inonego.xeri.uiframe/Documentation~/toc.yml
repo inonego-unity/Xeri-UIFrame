@@ -1,0 +1,46 @@
+- name: Xeri UIFrame
+  href: index.md
+- name: Getting Started
+  items:
+  - name: 설치와 의존성
+    href: getting-started/installation.md
+  - name: 프로젝트 설정과 시작
+    href: getting-started/setup.md
+- name: 관리 도구
+  href: control-center.md
+- name: Architecture
+  items:
+  - name: 전체 구조
+    href: architecture/overview.md
+  - name: Presentation Architecture
+    href: architecture/presentation.md
+  - name: Presentation Composition Contract
+    href: architecture/presentation-composition.md
+- name: UIFrame 핵심
+  items:
+  - name: UIFrame 핵심 개요
+    href: core/index.md
+  - name: Screen과 입력
+    href: core/screens.md
+  - name: Presentation
+    href: core/presentation.md
+  - name: Splash
+    href: core/splash.md
+  - name: Spotlight
+    href: core/spotlight.md
+  - name: 문제 해결
+    href: core/troubleshooting.md
+- name: 선택 모듈
+  items:
+  - name: Window
+    href: window/index.md
+  - name: Window View Source
+    href: window/view-source.md
+  - name: Tray
+    href: tray.md
+- name: Validation
+  href: validation.md
+- name: Guides
+  items:
+  - name: Window와 View Source 연결하기
+    href: guides/create-window-view.md

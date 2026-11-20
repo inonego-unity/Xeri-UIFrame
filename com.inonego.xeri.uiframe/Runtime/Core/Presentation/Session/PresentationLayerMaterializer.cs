@@ -1,0 +1,339 @@
+/* BLOCK_HEADER_BEGIN =======================================================================
+파일명 : PresentationLayerMaterializer.cs
+수정일 : 2026-11-11
+
+# 설명
+Top-level Presentation Layer를 Unity Native Output, LayerRoot와 ManagedRoot로 materialize하는 구현 경계다.
+PresentationSession은 runtime state와 lifetime만 소유하고 backend별 생성 세부사항은 이 타입에 위임한다.
+========================================================================= BLOCK_HEADER_END */
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+using UnityEngine;
+using UnityEngine.UIElements;
+
+namespace inonego.Xeri.UI.Frame
+{
+    // ======================================================================
+    /// <summary>
+    /// Backend별 Top-level Output 생성과 반환을 같은 Lifetime 계약으로 조립한다.
+    /// </summary>
+    // ======================================================================
+    internal static class PresentationLayerMaterializer
+    {
+
+    #region 상위 레이어 생성
+
+        private const string DEFAULT_UGUI_TEMPLATE_PATH =
+            "Xeri/UI/Core/Presentation/UIUGUIPresentationOutput";
+
+        // ----------------------------------------------------------------------
+        /// <summary>
+        /// <br/> Plan Backend에 따라 Native Output과 ManagedRoot를 생성한다.
+        /// <br/> 생성된 자원의 명시적 해제 callback을 함께 반환한다.
+        /// </summary>
+        // ----------------------------------------------------------------------
+        internal static IPresentationLayerDriver CreateTopLevel
+        (
+            PresentationPlanLayer plan,
+            Transform parent,
+            PanelSettings panelSettingsTemplate,
+            UGUIPresentationOutput uguiOutputTemplate,
+            out Action release
+        )
+        {
+            if (plan == null)
+            {
+                throw new ArgumentNullException(nameof(plan));
+            }
+
+            if (parent == null)
+            {
+                throw new ArgumentNullException(nameof(parent));
+            }
+
+            ValidateTopLevel(plan, panelSettingsTemplate);
+
+            switch (plan.Backend)
+            {
+                case PresentationBackend.UGUI:
+                    return CreateUGUI(plan, parent, uguiOutputTemplate, out release);
+
+                case PresentationBackend.UITK:
+                    return CreateUITK(plan, parent, panelSettingsTemplate, out release);
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(plan.Backend));
+            }
+        }
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// 생성형 Backend가 필요로 하는 설정을 출력 생성 전에 검증한다.
+        /// </summary>
+        // ------------------------------------------------------------
+        internal static void ValidateTopLevel
+        (
+            PresentationPlanLayer plan,
+            PanelSettings panelSettingsTemplate
+        )
+        {
+            if (plan == null)
+            {
+                throw new ArgumentNullException(nameof(plan));
+            }
+
+            if (plan.Backend != PresentationBackend.UITK) return;
+
+            if (panelSettingsTemplate == null)
+            {
+                throw new InvalidOperationException
+                (
+                    $"UITK Layer '{plan.LayerID}'를 생성할 PanelSettings Template이 없습니다."
+                );
+            }
+
+            if (panelSettingsTemplate.themeStyleSheet == null)
+            {
+                throw new InvalidOperationException
+                (
+                    $"UITK Layer '{plan.LayerID}'의 PanelSettings Template에 ThemeStyleSheet이 없습니다."
+                );
+            }
+        }
+
+    #endregion
+
+    #region UGUI 생성
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// UGUI Template Canvas를 생성해 Native Output 경계로 구성한다.
+        /// </summary>
+        // ------------------------------------------------------------
+        private static IPresentationLayerDriver CreateUGUI
+        (
+            PresentationPlanLayer plan,
+            Transform parent,
+            UGUIPresentationOutput template,
+            out Action release
+        )
+        {
+            template ??= Resources.Load<UGUIPresentationOutput>(DEFAULT_UGUI_TEMPLATE_PATH);
+
+            if (template == null)
+            {
+                throw new MissingReferenceException
+                (
+                    $"UGUI Presentation Output template '{DEFAULT_UGUI_TEMPLATE_PATH}'을 찾을 수 없습니다."
+                );
+            }
+
+            GameObject gameObject = null;
+            UGUIPresentationOutput output = null;
+
+            void ReleaseCreatedOutput()
+            {
+                ReleaseGeneratedOutput
+                (
+                    gameObject,
+                    () =>
+                    {
+                        if (output != null)
+                        {
+                            output.ReleaseOutputState();
+                        }
+                    }
+                );
+            }
+
+            try
+            {
+                output = UnityEngine.Object.Instantiate(template, parent, false);
+                gameObject = output.gameObject;
+                gameObject.name = $"Xeri UIFrame Layer - {plan.LayerID}";
+                gameObject.SetActive(false);
+                output.Initialize(plan.LayerOrder);
+                var managedRoot = UGUIPresentationSurface.CreateRect
+                (
+                    $"Managed Root - {plan.LayerID}",
+                    output.Root
+                );
+                gameObject.SetActive(true);
+                var driver = new UGUIPresentationLayer(managedRoot);
+                release = ReleaseCreatedOutput;
+                return driver;
+            }
+            catch (Exception exception)
+            {
+                try
+                {
+                    ReleaseCreatedOutput();
+                }
+                catch (Exception cleanupException)
+                {
+                    throw new AggregateException
+                    (
+                        $"UGUI Layer '{plan.LayerID}' materialization과 롤백이 실패했습니다.",
+                        exception,
+                        cleanupException
+                    );
+                }
+
+                throw;
+            }
+        }
+
+    #endregion
+
+    #region UITK 생성과 해제
+
+        // ----------------------------------------------------------------------
+        /// <summary>
+        /// UITK PanelRenderer와 Runtime PanelSettings clone을 구성한다.
+        /// </summary>
+        // ----------------------------------------------------------------------
+        private static IPresentationLayerDriver CreateUITK
+        (
+            PresentationPlanLayer plan,
+            Transform parent,
+            PanelSettings panelSettingsTemplate,
+            out Action release
+        )
+        {
+            GameObject gameObject = null;
+            UITKPresentationOutput output = null;
+
+            void ReleaseCreatedOutput()
+            {
+                ReleaseGeneratedOutput
+                (
+                    gameObject,
+                    () =>
+                    {
+                        if (output != null)
+                        {
+                            output.ReleaseOutputState();
+                        }
+                    }
+                );
+            }
+
+            try
+            {
+                gameObject = new GameObject($"Xeri UIFrame Layer - {plan.LayerID}");
+                gameObject.SetActive(false);
+                gameObject.transform.SetParent(parent, false);
+                gameObject.AddComponent<PanelRenderer>();
+                output = gameObject.AddComponent<UITKPresentationOutput>();
+
+                var layerRoot = UITKPresentationSurface.CreateRoot
+                (
+                    $"xeri-layer-{plan.LayerID}"
+                );
+                var managedRoot = UITKPresentationSurface.CreateRoot
+                (
+                    $"xeri-managed-{plan.LayerID}"
+                );
+                layerRoot.Add(managedRoot);
+                output.Initialize(panelSettingsTemplate, plan.LayerOrder);
+                output.AttachLayerRoot(layerRoot);
+                gameObject.SetActive(true);
+                var driver = new UITKPresentationLayer(managedRoot);
+                release = ReleaseCreatedOutput;
+                return driver;
+            }
+            catch (Exception exception)
+            {
+                try
+                {
+                    ReleaseCreatedOutput();
+                }
+                catch (Exception cleanupException)
+                {
+                    throw new AggregateException
+                    (
+                        $"UITK Layer '{plan.LayerID}' materialization과 롤백이 실패했습니다.",
+                        exception,
+                        cleanupException
+                    );
+                }
+
+                throw;
+            }
+        }
+
+        // ----------------------------------------------------------------------
+        /// <summary>
+        /// <br/> Generated native state를 복원하고 GameObject를 파괴한다.
+        /// <br/> 일부 반환이 실패해도 나머지 정리를 시도한다.
+        /// </summary>
+        // ----------------------------------------------------------------------
+        private static void ReleaseGeneratedOutput
+        (
+            GameObject gameObject,
+            Action releaseNativeState
+        )
+        {
+            var errors = new ExceptionBuffer();
+
+            try
+            {
+                releaseNativeState?.Invoke();
+            }
+            catch (Exception exception)
+            {
+                errors.Add(exception);
+            }
+
+            try
+            {
+                DestroyObject(gameObject);
+            }
+            catch (Exception exception)
+            {
+                errors.Add(exception);
+            }
+
+            if (errors.Count == 0) return;
+
+            if (errors.Count == 1)
+            {
+                throw errors[0];
+            }
+
+            throw errors.CreateAggregateException
+            (
+                "Generated Presentation Output 해제가 실패했습니다."
+            );
+        }
+
+    #endregion
+
+    #region 유틸
+
+        // ------------------------------------------------------------
+        /// <summary>
+        /// PlayMode와 EditMode의 GameObject 파괴 경계를 구분한다.
+        /// </summary>
+        // ------------------------------------------------------------
+        internal static void DestroyObject(GameObject gameObject)
+        {
+            if (gameObject == null) return;
+
+            if (UnityEngine.Application.isPlaying)
+            {
+                UnityEngine.Object.Destroy(gameObject);
+            }
+            else
+            {
+                UnityEngine.Object.DestroyImmediate(gameObject);
+            }
+        }
+
+    #endregion
+
+    }
+}
