@@ -42,8 +42,6 @@
   items:
   - name: Tray
     href: tray.md
-  - name: Bar
-    href: bar.md
 - name: Guides
   items:
   - name: Window와 View Source 연결하기

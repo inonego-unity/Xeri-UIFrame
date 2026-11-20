@@ -13,7 +13,6 @@ Documentation~/
 ├─ core/              Core 기능 사용법
 ├─ window/            Window 기능 사용법
 ├─ tray.md            Tray 사용법
-├─ bar.md             Bar 사용법
 └─ guides/            특정 작업 절차
 
 Docs/
@@ -54,7 +53,7 @@ Architecture 문서는 migration plan이나 작업 완료 상태를 참조하지
 
 ## 기능 문서
 
-`core/`, `window/`, `tray.md`, `bar.md`는 사용자가 실제 기능을 사용하는 방법을 설명합니다.
+`core/`, `window/`, `tray.md`는 사용자가 실제 기능을 사용하는 방법을 설명합니다.
 
 기본 순서:
 

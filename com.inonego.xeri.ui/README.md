@@ -8,9 +8,8 @@
 - **Window** — Workspace, Window Session, Simple/Application Window, persistence
 - **Tray** — entry list, selection, close request, optional UITK reorder
 - **Window View** — View acquire/release와 UI-local session
-- **Bar** — UGUI/UITK 값 범위와 변화 표시
 
-범용 Drag/Drop과 Picker는 `com.inonego.xeri`가 제공합니다.
+범용 Drag/Drop, Picker와 Bar는 `com.inonego.xeri`가 제공합니다.
 
 ## Namespace
 

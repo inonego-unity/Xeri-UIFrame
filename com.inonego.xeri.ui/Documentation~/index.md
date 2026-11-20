@@ -22,7 +22,7 @@ Xeri UI는 **Unity 7의 UI Toolkit·UGUI를 사용해 애플리케이션 단위 
 | 이동·최소화·최대화 가능한 Window | [Window](window/index.md) |
 | Window View 생성, UI 상태 저장·복원 | [Window View Source](window/view-source.md) |
 | Window/작업 항목 선택·닫기·재정렬 | [Tray](tray.md) |
-| 체력·진행 값과 증감 표시 | [Bar](bar.md) |
+| 체력·진행 값과 증감 표시 | Xeri Core의 Bar(`com.inonego.xeri`) |
 | 설정·레이아웃·씬 탐색 및 진단 | [관리 도구](control-center.md) |
 | Unity 씬에서 기능을 자유롭게 실험 | [Validation Desktop](validation.md) |
 | 시작·표시·입력 오류 해결 | [문제 해결](core/troubleshooting.md) |
