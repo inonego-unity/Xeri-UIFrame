@@ -56,7 +56,7 @@ namespace inonego.Xeri.UI.Editor
         // --------------------------------------------------------------------------------
         internal static StyleSheet LoadRowStyle()
         {
-            return Resources.Load<StyleSheet>("Xeri/Common/ListRows")
+            return Resources.Load<StyleSheet>("Xeri/UI/List/ListRows")
                 ?? throw new InvalidOperationException("공통 목록 행 스타일을 찾을 수 없습니다.");
         }
 

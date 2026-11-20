@@ -1,4 +1,4 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:xeri="inonego.Xeri">
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:xeri="inonego.Xeri.UI">
     <ui:VisualElement name="tray-button" class="xeri-tray-button">
         <ui:VisualElement name="entry-state-marker" class="xeri-tray-button__state-marker" />
         <ui:VisualElement name="entry-icon" class="xeri-tray-button__icon" />
