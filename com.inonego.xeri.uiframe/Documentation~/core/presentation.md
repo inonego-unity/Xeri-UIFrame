@@ -219,7 +219,7 @@ RenderGraph 콜백을 Feature로 전달하며 별도 정책·소유 상태를 �
 
 ## Unity 7 HDRP Native UI 출력 (Opt-in)
 
-HDRP 17.7에서는 **Tools > Xeri UIFrame > 관리 도구 열기**의 설정 > 렌더링에서 미리보기로 대상을 확인한 뒤
+HDRP 17.7에서는 **Xeri > UI Frame > Control Center**의 설정 > 렌더링에서 미리보기로 대상을 확인한 뒤
 **적용**으로 설치하고 **제거**로 소유 변경을 반환합니다.
 설치기는 현재 HDRP Global Settings의 Before/After Post Process 목록,
 Player에서 사용할 기본 Volume Profile의 두 타입과 프로젝트 HDRP의 FP16 버퍼 포맷을 준비합니다.

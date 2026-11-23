@@ -1,6 +1,6 @@
 # Xeri UIFrame 관리 도구
 
-Unity 메뉴 **Tools > Xeri UIFrame > 관리 도구 열기**에서 엽니다. 도킹할 수 있는 UI Toolkit 편집기 창이며, 처음 열 때는 에디터 가운데에 1280×800 크기로 열립니다.
+Unity 메뉴 **Xeri > UI Frame > Control Center**에서 엽니다. 도킹할 수 있는 UI Toolkit 편집기 창이며, 처음 열 때는 에디터 가운데에 1280×800 크기로 열립니다.
 
 ## 화면 구성
 

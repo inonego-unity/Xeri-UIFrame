@@ -1,6 +1,6 @@
 /* BLOCK_HEADER_BEGIN =======================================================================
 파일명 : XeriUIControlCenterWindow.cs
-수정일 : 2026-11-17
+수정일 : 2026-11-24
 
 # 설명
 Xeri UIFrame 관리 도구 창의 탭, 설정 선택 메뉴, 검사 상태 표시와 Editor 이벤트 연결을 담당한다.
@@ -36,7 +36,7 @@ namespace inonego.Xeri.UI.Frame.Editor
 
     #region 필드
 
-        private const string menuPath = "Tools/Xeri UIFrame/관리 도구 열기";
+        private const string menuPath = "Xeri/UI Frame/Control Center";
         private const float compactWidth = 640f;
         private static readonly Vector2 defaultSize = new(1280f, 800f);
 
