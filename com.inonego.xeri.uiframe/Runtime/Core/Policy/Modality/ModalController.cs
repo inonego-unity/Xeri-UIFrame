@@ -1,6 +1,6 @@
 /* BLOCK_HEADER_BEGIN =======================================================================
 파일명 : ModalController.cs
-수정일 : 2026-11-02
+수정일 : 2026-11-25
 # 설명
 Modality Policy Stack을 소유하고 상단 Session만 상호작용 가능하도록 backend 상태를 갱신한다.
 각 Session은 Presentation과 상호작용 backend를 분리하며, 선택적 Focus Override와 부가 lifetime은 Session이 함께 소유한다.
@@ -41,7 +41,7 @@ namespace inonego.Xeri.UI.Frame
         private readonly bool ownerControlsLifetime = false;
         private bool isDisposed = false;
         private bool isOpening = false;
-        private int stackRevision = 0;
+        private Revision stackRevision = Revision.None;
 
     #endregion
 
@@ -61,7 +61,8 @@ namespace inonego.Xeri.UI.Frame
         // ------------------------------------------------------------
         private void NotifyStackChanged()
         {
-            var revision = ++stackRevision;
+            stackRevision = stackRevision.Inc();
+            var revision = stackRevision;
             var handlers = OnStackChanged;
             if (handlers == null) return;
 

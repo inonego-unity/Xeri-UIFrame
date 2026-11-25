@@ -1,6 +1,6 @@
 /* BLOCK_HEADER_BEGIN =======================================================================
 파일명 : ScreenController.cs
-수정일 : 2026-11-07
+수정일 : 2026-11-25
 # 설명
 Screen Open·Close·Replace·Clear 명령과 Stack, 상태 훅, Transition과 대칭 수명을 중재한다.
 재진입 입력 획득에서는 정책 적용 완료 후에만 Screen 열기 전환을 시작한다.
@@ -104,7 +104,7 @@ namespace inonego.Xeri.UI.Frame
         public event Action OnStackChanged = null;
 
         internal event Action OnPolicyChanged = null;
-        private int stackRevision = 0;
+        private Revision stackRevision = Revision.None;
 
     #endregion
 
@@ -377,7 +377,8 @@ namespace inonego.Xeri.UI.Frame
             errors.ThrowWhenAny("Screen Stack 정책 적용이 실패했습니다.");
 
             // 완료 알림은 정책 적용의 rollback 원인이 아니다.
-            var revision = ++stackRevision;
+            stackRevision = stackRevision.Inc();
+            var revision = stackRevision;
             var observers = OnStackChanged;
             if (observers == null) return;
 
@@ -1000,7 +1001,8 @@ namespace inonego.Xeri.UI.Frame
         private void StartOpening(ScreenSession session)
         {
             InvalidateTransition(session);
-            var generation = ++session.TransitionGeneration;
+            session.TransitionGeneration = session.TransitionGeneration.Inc();
+            var generation = session.TransitionGeneration;
             var parameters = new PresentationTransitionParams
             (
                 session.Alpha,
@@ -1047,7 +1049,7 @@ namespace inonego.Xeri.UI.Frame
         private void CompleteOpening
         (
             ScreenSession session,
-            int generation
+            Revision generation
         )
         {
             if (!IsExpected(session, generation, ScreenState.Opening)) return;
@@ -1284,7 +1286,8 @@ namespace inonego.Xeri.UI.Frame
         // ------------------------------------------------------------
         private void StartClosing(ScreenSession session)
         {
-            var generation = ++session.TransitionGeneration;
+            session.TransitionGeneration = session.TransitionGeneration.Inc();
+            var generation = session.TransitionGeneration;
             var parameters = new PresentationTransitionParams
             (
                 session.Alpha,
@@ -1331,7 +1334,7 @@ namespace inonego.Xeri.UI.Frame
         private void FinishClosingTransition
         (
             ScreenSession session,
-            int generation
+            Revision generation
         )
         {
             if (!IsExpected(session, generation, ScreenState.Closing)) return;
@@ -1992,7 +1995,7 @@ namespace inonego.Xeri.UI.Frame
         // ----------------------------------------------------------------------
         private void InvalidateTransition(ScreenSession session)
         {
-            session.TransitionGeneration++;
+            session.TransitionGeneration = session.TransitionGeneration.Inc();
 
             var current = session.Transition;
 
@@ -2010,7 +2013,7 @@ namespace inonego.Xeri.UI.Frame
         private bool IsExpected
         (
             ScreenSession session,
-            int generation,
+            Revision generation,
             ScreenState state
         )
         {

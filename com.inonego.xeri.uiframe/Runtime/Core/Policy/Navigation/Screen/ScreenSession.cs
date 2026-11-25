@@ -1,6 +1,6 @@
 /* BLOCK_HEADER_BEGIN =======================================================================
 파일명 : ScreenSession.cs
-수정일 : 2026-11-02
+수정일 : 2026-11-25
 # 설명
 한 Screen의 공개 상태와 Stack, Hook, Transition 및 합성 Alpha 진행 상태를 묶는다.
 ========================================================================= BLOCK_HEADER_END */
@@ -115,7 +115,7 @@ namespace inonego.Xeri.UI.Frame
         /// 늦은 Transition callback을 거부할 현재 세대값.
         /// </summary>
         // ------------------------------------------------------------
-        internal int TransitionGeneration { get; set; }
+        internal Revision TransitionGeneration { get; set; }
 
         private readonly ScreenController controller = null;
 

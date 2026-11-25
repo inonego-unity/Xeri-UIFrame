@@ -1,6 +1,6 @@
 /* BLOCK_HEADER_BEGIN =======================================================================
 파일명 : InputSystemScreenInputDriver.cs
-수정일 : 2026-11-08
+수정일 : 2026-11-25
 # 설명
 Screen 입력 정책을 active Context contribution만 사용해 Action Map과 Cursor 상태에 합성하고 입력 해제 장벽을 갱신한다.
 ========================================================================= BLOCK_HEADER_END */
@@ -101,7 +101,7 @@ namespace inonego.Xeri.UI.Frame
         private int batchDepth = 0;
         private bool applyPending = false;
         private bool isApplyingPolicy = false;
-        private int policyRevision = 0;
+        private Revision policyRevision = Revision.None;
         private ScreenInputSession retainedCursorOwner = null;
         private bool isDisposed = false;
 
@@ -657,10 +657,7 @@ namespace inonego.Xeri.UI.Frame
         private void RequestApply()
         {
             // 외부 Input Action callback이 정책 소유권을 바꾸면 이전 적용 결과는 폐기한다.
-            unchecked
-            {
-                policyRevision++;
-            }
+            policyRevision = policyRevision.Inc();
 
             applyPending = true;
             ApplyPendingPolicy();
@@ -756,11 +753,8 @@ namespace inonego.Xeri.UI.Frame
         // ------------------------------------------------------------
         private ExceptionBuffer ReleaseAllSessions()
         {
-            // Dispose뿐 아니라 ForceReleaseAll도 진행 중인 정책 적용의 세대를 종료한다.
-            unchecked
-            {
-                policyRevision++;
-            }
+            // Dispose뿐 아니라 ForceReleaseAll도 진행 중인 정책 적용을 무효화한다.
+            policyRevision = policyRevision.Inc();
 
             var errors = new ExceptionBuffer();
             var releasingSessions = new List<SessionState>(sessions.Count);
@@ -1086,7 +1080,7 @@ namespace inonego.Xeri.UI.Frame
         (
             InputActionMap map,
             bool[] states,
-            int revision
+            Revision revision
         )
         {
             var errors = new ExceptionBuffer();
@@ -1136,7 +1130,7 @@ namespace inonego.Xeri.UI.Frame
             bool gameplayEnabled,
             bool cursorVisible,
             CursorLockMode cursorLockMode,
-            int revision
+            Revision revision
         )
         {
             var errors = new ExceptionBuffer();

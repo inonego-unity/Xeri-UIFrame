@@ -1,6 +1,6 @@
 /* BLOCK_HEADER_BEGIN =======================================================================
 파일명 : PresentationAlpha.cs
-수정일 : 2026-11-02
+수정일 : 2026-11-25
 
 # 설명
 Presentation의 local Alpha 값과 Modifier 소유권을 backend 적용과 함께 관리한다.
@@ -361,7 +361,7 @@ namespace inonego.Xeri.UI.Frame
         private readonly Action<T> apply;
         private bool isUpdating;
         private bool applyPending;
-        private int revision;
+        private Revision revision = Revision.None;
 
         internal PresentationValue(object sender, T value, Func<T> read, Action<T> apply)
         {
@@ -415,7 +415,7 @@ namespace inonego.Xeri.UI.Frame
                 var next = Evaluate(value);
                 if (!Equal(previousBase, value) || !Equal(previousModified, next))
                 {
-                    revision++;
+                    revision = revision.Inc();
                 }
 
                 Base = value;
@@ -515,7 +515,7 @@ namespace inonego.Xeri.UI.Frame
                     Apply(true);
                 }
 
-                revision++;
+                revision = revision.Inc();
             }
             catch (Exception exception)
             {
@@ -573,7 +573,7 @@ namespace inonego.Xeri.UI.Frame
                 if (modifiers.TryGetEntry(key, out var entry))
                 {
                     removed = modifiers.Remove(key);
-                    revision++;
+                    revision = revision.Inc();
                     var subscription = FindSubscription(entry.Value);
                     var stillUsed = false;
 
@@ -617,7 +617,7 @@ namespace inonego.Xeri.UI.Frame
                 // 해제 accessor가 실패해도 모든 논리 소유권은 먼저 종료한다.
                 if (modifiers.Count > 0)
                 {
-                    revision++;
+                    revision = revision.Inc();
                 }
 
                 modifiers.Clear();
@@ -714,7 +714,7 @@ namespace inonego.Xeri.UI.Frame
             ValueChangeEventHandler<T> handlers,
             T previous,
             T current,
-            int expectedRevision,
+            Revision expectedRevision,
             ref ExceptionBuffer errors
         )
         {
