@@ -13,6 +13,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.Pool;
 using UnityEngine.UIElements;
 using inonego.Xeri.UI.Frame;
 
@@ -301,19 +302,26 @@ namespace inonego.Xeri.UI.Window
         private void ApplyWindowOrder()
         {
             var ordered = registry.Records;
-            var orderedPanels = new List<XeriWindowPanel>();
+            var orderedPanels = ListPool<XeriWindowPanel>.Get();
 
-            foreach (var record in ordered)
+            try
             {
-                if (!registry.TryGetHandle(record.ID, out var handle)) continue;
-                if (!panels.TryGetValue(handle, out var panel)) continue;
+                foreach (var record in ordered)
+                {
+                    if (!registry.TryGetHandle(record.ID, out var handle)) continue;
+                    if (!panels.TryGetValue(handle, out var panel)) continue;
 
-                orderedPanels.Add(panel);
+                    orderedPanels.Add(panel);
+                }
+
+                foreach (var panel in orderedPanels)
+                {
+                    panel.BringToFront();
+                }
             }
-
-            foreach (var panel in orderedPanels)
+            finally
             {
-                panel.BringToFront();
+                ListPool<XeriWindowPanel>.Release(orderedPanels);
             }
         }
 

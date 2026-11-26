@@ -12,6 +12,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.Pool;
 using UnityEngine.UIElements;
 
 namespace inonego.Xeri.UI.Frame
@@ -331,22 +332,29 @@ namespace inonego.Xeri.UI.Frame
         // ----------------------------------------------------------------------
         private void ClearNativeFocus()
         {
-            var visitedPanels = new HashSet<IPanel>();
+            var visitedPanels = HashSetPool<IPanel>.Get();
 
-            for (var index = 0; index < layerRoots.Count; index++)
+            try
             {
-                var panel = layerRoots[index]?.panel;
-
-                if (panel == null || !visitedPanels.Add(panel)) continue;
-
-                if
-                (
-                    panel.focusController?.focusedElement is VisualElement focused &&
-                    Owns(focused)
-                )
+                for (var index = 0; index < layerRoots.Count; index++)
                 {
-                    focused.Blur();
+                    var panel = layerRoots[index]?.panel;
+
+                    if (panel == null || !visitedPanels.Add(panel)) continue;
+
+                    if
+                    (
+                        panel.focusController?.focusedElement is VisualElement focused &&
+                        Owns(focused)
+                    )
+                    {
+                        focused.Blur();
+                    }
                 }
+            }
+            finally
+            {
+                HashSetPool<IPanel>.Release(visitedPanels);
             }
         }
 

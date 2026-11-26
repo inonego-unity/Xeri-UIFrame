@@ -14,6 +14,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.Pool;
 using UnityEngine.UIElements;
 
 using inonego;
@@ -964,20 +965,29 @@ namespace inonego.Xeri.UI.Window
             // Save 콜백 전 현재 Registry 상태를 고정한다.
             var snapshots = new List<XeriWindowRecord>(registry.Records);
             var errors = new ExceptionBuffer();
-            var currentSessions = new List<XeriWindowSession>(sessionOrder);
+            var currentSessions = ListPool<XeriWindowSession>.Get();
 
-            foreach (var session in currentSessions)
+            try
             {
-                if (session == null || session.IsDisposed) continue;
+                currentSessions.AddRange(sessionOrder);
 
-                try
+                foreach (var session in currentSessions)
                 {
-                    session.SaveViewSession();
+                    if (session == null || session.IsDisposed) continue;
+
+                    try
+                    {
+                        session.SaveViewSession();
+                    }
+                    catch (Exception exception)
+                    {
+                        errors.Add(exception);
+                    }
                 }
-                catch (Exception exception)
-                {
-                    errors.Add(exception);
-                }
+            }
+            finally
+            {
+                ListPool<XeriWindowSession>.Release(currentSessions);
             }
 
             if (errors.Count > 0)

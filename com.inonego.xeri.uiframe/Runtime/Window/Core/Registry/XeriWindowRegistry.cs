@@ -758,10 +758,16 @@ namespace inonego.Xeri.UI.Window
         // ------------------------------------------------------------
         private void AddRecordByStackLayer(List<XeriWindowRecord> records, XeriWindowRecord record)
         {
-            var insertIndex = records.FindIndex
-            (
-                item => item.StackLayer > record.StackLayer
-            );
+            var insertIndex = -1;
+
+            for (var index = 0; index < records.Count; index++)
+            {
+                if (records[index].StackLayer > record.StackLayer)
+                {
+                    insertIndex = index;
+                    break;
+                }
+            }
 
             if (insertIndex < 0)
             {

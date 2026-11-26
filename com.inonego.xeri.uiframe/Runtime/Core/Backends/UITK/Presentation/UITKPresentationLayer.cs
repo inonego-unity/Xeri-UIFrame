@@ -14,6 +14,7 @@ using System.Runtime;
 using System.Runtime.CompilerServices;
 
 using UnityEngine;
+using UnityEngine.Pool;
 using UnityEngine.UIElements;
 
 namespace inonego.Xeri.UI.Frame
@@ -207,18 +208,29 @@ namespace inonego.Xeri.UI.Frame
             }
 
             var errors = new ExceptionBuffer();
-            foreach (var content in ownedContents.ToArray())
-            {
-                if (!ownedContents.Contains(content)) continue;
+            var contents = ListPool<VisualElement>.Get();
 
-                try
+            try
+            {
+                contents.AddRange(ownedContents);
+
+                foreach (var content in contents)
                 {
-                    BindContent(content);
+                    if (!ownedContents.Contains(content)) continue;
+
+                    try
+                    {
+                        BindContent(content);
+                    }
+                    catch (Exception exception)
+                    {
+                        errors.Add(exception);
+                    }
                 }
-                catch (Exception exception)
-                {
-                    errors.Add(exception);
-                }
+            }
+            finally
+            {
+                ListPool<VisualElement>.Release(contents);
             }
 
             // 중첩 교체가 일어났다면 최신 호출에서 이미 RootChanged를 전달한다.
