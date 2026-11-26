@@ -358,17 +358,7 @@ namespace inonego.Xeri.UI.Frame
 
             if (invokeCompletionCallback && completionCallback != null)
             {
-                foreach (Action callback in completionCallback.GetInvocationList())
-                {
-                    try
-                    {
-                        callback.Invoke();
-                    }
-                    catch (Exception exception)
-                    {
-                        errors.Add(exception);
-                    }
-                }
+                completionCallback.InvokeEach(ref errors);
             }
 
             if (errors.Count == 0) return;

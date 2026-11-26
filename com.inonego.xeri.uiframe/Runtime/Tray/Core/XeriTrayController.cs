@@ -127,17 +127,7 @@ namespace inonego.Xeri.UI.Tray
         {
             if (handlers == null) return;
 
-            foreach (EventHandler handler in handlers.GetInvocationList())
-            {
-                try
-                {
-                    handler.Invoke(this, eventArgs);
-                }
-                catch (Exception exception)
-                {
-                    errors.Add(exception);
-                }
-            }
+            handlers.InvokeEach(this, eventArgs, ref errors);
         }
 
         // ----------------------------------------------------------------------
@@ -155,17 +145,7 @@ namespace inonego.Xeri.UI.Tray
         {
             if (handlers == null) return;
 
-            foreach (EventHandler<TEventArgs> handler in handlers.GetInvocationList())
-            {
-                try
-                {
-                    handler.Invoke(this, eventArgs);
-                }
-                catch (Exception exception)
-                {
-                    errors.Add(exception);
-                }
-            }
+            handlers.InvokeEach(this, eventArgs, ref errors);
         }
 
         // ------------------------------------------------------------

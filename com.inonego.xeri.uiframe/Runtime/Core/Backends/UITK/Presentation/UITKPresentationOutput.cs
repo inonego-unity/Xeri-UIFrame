@@ -435,20 +435,19 @@ namespace inonego.Xeri.UI.Frame
 
             var errors = new ExceptionBuffer();
 
-            foreach (Action<VisualElement> handler in handlers.GetInvocationList())
-            {
-                // 이전 알림 중 Release·재연결되면 오래된 Root를 뒤 구독자에게 전달하지 않는다.
-                if (!ReferenceEquals(root, value)) break;
+            handlers.InvokeEach
+            (
+                this,
+                value,
+                static (each, self, updated) =>
+                {
+                    // 이전 알림 중 Release·재연결되면 오래된 Root를 뒤 구독자에게 전달하지 않는다.
+                    if (!ReferenceEquals(self.root, updated)) return;
 
-                try
-                {
-                    handler(value);
-                }
-                catch (Exception exception)
-                {
-                    errors.Add(exception);
-                }
-            }
+                    each(updated);
+                },
+                ref errors
+            );
 
             errors.ThrowWhenAny
             (

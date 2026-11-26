@@ -223,23 +223,22 @@ namespace inonego.Xeri.UI.Frame
 
             // 중첩 교체가 일어났다면 최신 호출에서 이미 RootChanged를 전달한다.
             var callbacks = ReferenceEquals(Root, root)
-                ? RootChanged?.GetInvocationList()
+                ? RootChanged
                 : null;
             if (callbacks != null)
             {
-                foreach (Action<UITKPresentationLayer> callback in callbacks)
-                {
-                    if (!ReferenceEquals(Root, root)) break;
+                callbacks.InvokeEach
+                (
+                    this,
+                    root,
+                    static (each, self, expectedRoot) =>
+                    {
+                        if (!ReferenceEquals(self.Root, expectedRoot)) return;
 
-                    try
-                    {
-                        callback(this);
-                    }
-                    catch (Exception exception)
-                    {
-                        errors.Add(exception);
-                    }
-                }
+                        each(self);
+                    },
+                    ref errors
+                );
             }
 
             if (errors.Count > 0)

@@ -333,17 +333,7 @@ namespace inonego.Xeri.UI.Tray
 
             var errors = new ExceptionBuffer();
 
-            foreach (EventHandler<XeriTrayEventArgs> handler in handlers.GetInvocationList())
-            {
-                try
-                {
-                    handler.Invoke(this, eventArgs);
-                }
-                catch (Exception exception)
-                {
-                    errors.Add(exception);
-                }
-            }
+            handlers.InvokeEach(this, eventArgs, ref errors);
 
             if (errors.Count == 0) return;
 

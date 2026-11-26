@@ -1045,19 +1045,20 @@ namespace inonego.Xeri.UI.Frame
 
             var errors = new ExceptionBuffer();
 
-            foreach (Action<UIRuntime> subscriber in subscribers.GetInvocationList())
+            subscribers.InvokeEach
+            (
+                this,
+                static (each, self) =>
+                {
+                    if (!self.IsInitialized) return;
+
+                    each(self);
+                },
+                ref errors
+            );
+
+            if (!IsInitialized)
             {
-                try
-                {
-                    subscriber.Invoke(this);
-                }
-                catch (Exception exception)
-                {
-                    errors.Add(exception);
-                }
-
-                if (IsInitialized) continue;
-
                 errors.Add
                 (
                     new InvalidOperationException
@@ -1065,7 +1066,6 @@ namespace inonego.Xeri.UI.Frame
                         "OnInitialized 처리 중 UI Runtime이 종료됐습니다."
                     )
                 );
-                break;
             }
 
             if (errors.Count == 0) return;
@@ -1094,17 +1094,7 @@ namespace inonego.Xeri.UI.Frame
         {
             if (subscribers == null) return;
 
-            foreach (Action<UIRuntime> subscriber in subscribers.GetInvocationList())
-            {
-                try
-                {
-                    subscriber.Invoke(this);
-                }
-                catch (Exception exception)
-                {
-                    errors.Add(exception);
-                }
-            }
+            subscribers.InvokeEach(this, ref errors);
         }
 
         // ------------------------------------------------------------

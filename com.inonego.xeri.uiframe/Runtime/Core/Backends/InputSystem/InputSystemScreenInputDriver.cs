@@ -1419,18 +1419,10 @@ namespace inonego.Xeri.UI.Frame
             var handlers = OnLastInputDeviceChanged;
             if (handlers == null) return;
 
-            foreach (Action<InputDevice> handler in handlers.GetInvocationList())
-            {
-                try
-                {
-                    handler.Invoke(device);
-                }
-                catch (Exception exception)
-                {
-                    // 한 observer 실패가 뒤 observer와 Input System update를 차단하지 않게 격리한다.
-                    Debug.LogException(exception, this);
-                }
-            }
+            // 한 observer 실패가 뒤 observer와 Input System update를 차단하지 않게 격리한다.
+            var errors = new ExceptionBuffer();
+            handlers.InvokeEach(device, ref errors);
+            errors.LogAll(this);
         }
 
         // ------------------------------------------------------------

@@ -276,19 +276,17 @@ namespace inonego.Xeri.UI.Frame
 
             var errors = new ExceptionBuffer();
 
-            foreach (Action handler in handlers.GetInvocationList())
-            {
-                if (isDisposed) break;
+            handlers.InvokeEach
+            (
+                this,
+                static (each, self) =>
+                {
+                    if (self.isDisposed) return;
 
-                try
-                {
-                    handler.Invoke();
-                }
-                catch (Exception exception)
-                {
-                    errors.Add(exception);
-                }
-            }
+                    each();
+                },
+                ref errors
+            );
 
             if (errors.Count == 0) return;
 

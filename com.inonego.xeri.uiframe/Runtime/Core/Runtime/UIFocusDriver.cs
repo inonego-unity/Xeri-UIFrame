@@ -635,19 +635,18 @@ namespace inonego.Xeri.UI.Frame
 
             var errors = new ExceptionBuffer();
 
-            foreach (Action<object> handler in handlers.GetInvocationList())
-            {
-                if (!isInitialized || pendingFocusChange != FocusChangeKind.None) break;
+            handlers.InvokeEach
+            (
+                this,
+                target,
+                static (each, self, focusTarget) =>
+                {
+                    if (!self.isInitialized || self.pendingFocusChange != FocusChangeKind.None) return;
 
-                try
-                {
-                    handler.Invoke(target);
-                }
-                catch (Exception exception)
-                {
-                    errors.Add(exception);
-                }
-            }
+                    each(focusTarget);
+                },
+                ref errors
+            );
 
             ThrowFocusErrors("공통 Focus 변경 observer 처리", errors);
         }

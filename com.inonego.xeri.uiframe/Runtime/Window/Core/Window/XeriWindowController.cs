@@ -752,21 +752,7 @@ namespace inonego.Xeri.UI.Window
 
             try
             {
-                foreach
-                (
-                    EventHandler<XeriWindowCancelEventArgs> handler in
-                    preEvent.GetInvocationList()
-                )
-                {
-                    try
-                    {
-                        handler.Invoke(this, eventArgs);
-                    }
-                    catch (Exception exception)
-                    {
-                        errors.Add(exception);
-                    }
-                }
+                preEvent.InvokeEach(this, eventArgs, ref errors);
             }
             finally
             {
@@ -1024,17 +1010,7 @@ namespace inonego.Xeri.UI.Window
         {
             if (handlers == null) return;
 
-            foreach (ValueChangeEventHandler<T> handler in handlers.GetInvocationList())
-            {
-                try
-                {
-                    handler.Invoke(this, eventArgs);
-                }
-                catch (Exception exception)
-                {
-                    errors.Add(exception);
-                }
-            }
+            handlers.InvokeEach(this, eventArgs, static (each, sender, args) => each(sender, args), ref errors);
         }
 
         // ------------------------------------------------------------
@@ -1051,17 +1027,7 @@ namespace inonego.Xeri.UI.Window
         {
             if (handlers == null) return;
 
-            foreach (EventHandler<XeriWindowEventArgs> handler in handlers.GetInvocationList())
-            {
-                try
-                {
-                    handler.Invoke(this, eventArgs);
-                }
-                catch (Exception exception)
-                {
-                    errors.Add(exception);
-                }
-            }
+            handlers.InvokeEach(this, eventArgs, ref errors);
         }
 
         // ----------------------------------------------------------------------

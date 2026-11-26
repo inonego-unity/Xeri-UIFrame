@@ -323,17 +323,7 @@ namespace inonego.Xeri.UI.Window
 
             var errors = new ExceptionBuffer();
 
-            foreach (EventHandler handler in handlers.GetInvocationList())
-            {
-                try
-                {
-                    handler.Invoke(this, EventArgs.Empty);
-                }
-                catch (Exception exception)
-                {
-                    errors.Add(exception);
-                }
-            }
+            handlers.InvokeEach(this, EventArgs.Empty, ref errors);
 
             if (errors.Count == 0) return;
 

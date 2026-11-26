@@ -150,17 +150,7 @@ namespace inonego.Xeri.UI.Frame
             // 한 구독자의 실패가 다른 취소 알림을 막지 않도록 개별적으로 호출한다.
             if (onCancelled != null)
             {
-                foreach (Action listener in onCancelled.GetInvocationList())
-                {
-                    try
-                    {
-                        listener();
-                    }
-                    catch (Exception exception)
-                    {
-                        errors.Add(exception);
-                    }
-                }
+                onCancelled.InvokeEach(ref errors);
             }
 
             errors.ThrowWhenAny("Presentation Transition 취소와 알림이 실패했습니다.");

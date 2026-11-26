@@ -242,19 +242,20 @@ namespace inonego.Xeri.UI.Window
 
             if (registeredHandlers != null)
             {
-                foreach (EventHandler<XeriWindowEventArgs> handler in registeredHandlers.GetInvocationList())
-                {
-                    if (!HasRegistrationOwnership(id, entry)) break;
+                registeredHandlers.InvokeEach
+                (
+                    this,
+                    id,
+                    entry,
+                    registeredArgs,
+                    static (each, self, ownerID, ownerEntry, eventArgs) =>
+                    {
+                        if (!self.HasRegistrationOwnership(ownerID, ownerEntry)) return;
 
-                    try
-                    {
-                        handler(this, registeredArgs);
-                    }
-                    catch (Exception exception)
-                    {
-                        errors.Add(exception);
-                    }
-                }
+                        each(self, eventArgs);
+                    },
+                    ref errors
+                );
             }
 
             if (HasRegistrationOwnership(id, entry))
@@ -709,17 +710,7 @@ namespace inonego.Xeri.UI.Window
         {
             if (handlers == null) return;
 
-            foreach (EventHandler handler in handlers.GetInvocationList())
-            {
-                try
-                {
-                    handler.Invoke(this, eventArgs);
-                }
-                catch (Exception exception)
-                {
-                    errors.Add(exception);
-                }
-            }
+            handlers.InvokeEach(this, eventArgs, ref errors);
         }
 
         // ----------------------------------------------------------------------
@@ -737,17 +728,7 @@ namespace inonego.Xeri.UI.Window
         {
             if (handlers == null) return;
 
-            foreach (EventHandler<TEventArgs> handler in handlers.GetInvocationList())
-            {
-                try
-                {
-                    handler.Invoke(this, eventArgs);
-                }
-                catch (Exception exception)
-                {
-                    errors.Add(exception);
-                }
-            }
+            handlers.InvokeEach(this, eventArgs, ref errors);
         }
 
         // ------------------------------------------------------------

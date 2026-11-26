@@ -361,17 +361,7 @@ namespace inonego.Xeri.UI.Frame
 
             if (handlers != null)
             {
-                foreach (Action handler in handlers.GetInvocationList())
-                {
-                    try
-                    {
-                        handler.Invoke();
-                    }
-                    catch (Exception exception)
-                    {
-                        errors.Add(exception);
-                    }
-                }
+                handlers.InvokeEach(ref errors);
             }
 
             errors.ThrowWhenAny("Screen Stack 정책 적용이 실패했습니다.");
@@ -382,19 +372,20 @@ namespace inonego.Xeri.UI.Frame
             var observers = OnStackChanged;
             if (observers == null) return;
 
-            foreach (Action observer in observers.GetInvocationList())
-            {
-                if (revision != stackRevision) break;
+            observers.InvokeEach
+            (
+                this,
+                revision,
+                static (each, self, expected) =>
+                {
+                    if (expected != self.stackRevision) return;
 
-                try
-                {
-                    observer();
-                }
-                catch (Exception exception)
-                {
-                    Debug.LogException(exception);
-                }
-            }
+                    each();
+                },
+                ref errors
+            );
+
+            errors.LogAll();
         }
 
     #endregion

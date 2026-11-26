@@ -100,20 +100,18 @@ namespace inonego.Xeri.UI.Frame
 
             var errors = new ExceptionBuffer();
 
-            foreach (Action handler in handlers.GetInvocationList())
-            {
-                // 해제되면 기존 delegate snapshot의 나머지 알림도 중단한다.
-                if (isDisposed) break;
+            handlers.InvokeEach
+            (
+                this,
+                static (each, self) =>
+                {
+                    // 해제되면 기존 delegate snapshot의 나머지 알림도 중단한다.
+                    if (self.isDisposed) return;
 
-                try
-                {
-                    handler.Invoke();
-                }
-                catch (Exception exception)
-                {
-                    errors.Add(exception);
-                }
-            }
+                    each();
+                },
+                ref errors
+            );
 
             if (errors.Count == 0) return;
 

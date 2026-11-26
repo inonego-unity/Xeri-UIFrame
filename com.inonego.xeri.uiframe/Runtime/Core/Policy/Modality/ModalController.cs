@@ -66,19 +66,22 @@ namespace inonego.Xeri.UI.Frame
             var handlers = OnStackChanged;
             if (handlers == null) return;
 
-            foreach (Action handler in handlers.GetInvocationList())
-            {
-                if (revision != stackRevision) break;
+            var errors = new ExceptionBuffer();
 
-                try
+            handlers.InvokeEach
+            (
+                this,
+                revision,
+                static (each, self, expected) =>
                 {
-                    handler();
-                }
-                catch (Exception exception)
-                {
-                    Debug.LogException(exception);
-                }
-            }
+                    if (expected != self.stackRevision) return;
+
+                    each();
+                },
+                ref errors
+            );
+
+            errors.LogAll();
         }
 
     #endregion

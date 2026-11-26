@@ -722,19 +722,19 @@ namespace inonego.Xeri.UI.Frame
 
             var args = new ValueChangeEventArgs<T>(previous, current);
 
-            foreach (ValueChangeEventHandler<T> handler in handlers.GetInvocationList())
-            {
-                if (revision != expectedRevision) break;
+            handlers.InvokeEach
+            (
+                this,
+                args,
+                expectedRevision,
+                static (each, self, eventArgs, expected) =>
+                {
+                    if (self.revision != expected) return;
 
-                try
-                {
-                    handler(sender, args);
-                }
-                catch (Exception exception)
-                {
-                    errors.Add(exception);
-                }
-            }
+                    each(self.sender, eventArgs);
+                },
+                ref errors
+            );
         }
 
         private static void ThrowErrors(ExceptionBuffer errors)
