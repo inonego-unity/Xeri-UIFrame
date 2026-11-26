@@ -154,12 +154,7 @@ namespace inonego.Xeri.UI.Frame
 
             if (errors.Count == 0) return;
 
-            if (errors.Count == 1)
-            {
-                throw errors[0];
-            }
-
-            throw errors.CreateAggregateException
+            errors.ThrowWhenAny
             (
                 $"UGUI Layer Host '{LayerID}' borrowed state 복원이 실패했습니다."
             );

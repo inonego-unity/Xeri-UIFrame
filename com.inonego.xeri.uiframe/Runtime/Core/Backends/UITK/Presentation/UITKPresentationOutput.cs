@@ -450,18 +450,10 @@ namespace inonego.Xeri.UI.Frame
                 }
             }
 
-            if (errors.Count == 1)
-            {
-                throw errors[0];
-            }
-
-            if (errors.Count > 1)
-            {
-                throw errors.CreateAggregateException
-                (
-                    "UITK Presentation Output Root 변경 알림이 실패했습니다."
-                );
-            }
+            errors.ThrowWhenAny
+            (
+                "UITK Presentation Output Root 변경 알림이 실패했습니다."
+            );
         }
 
         private void AttachLayerToRoot()

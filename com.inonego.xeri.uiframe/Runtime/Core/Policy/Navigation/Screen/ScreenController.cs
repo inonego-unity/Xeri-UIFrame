@@ -198,7 +198,8 @@ namespace inonego.Xeri.UI.Frame
             }
             catch (Exception exception)
             {
-                var errors = new ExceptionBuffer(exception);
+                var errors = new ExceptionBuffer();
+                errors.Add(exception);
 
                 for (var index = (changedSessions?.Count ?? 0) - 1; index >= 0; index--)
                 {
@@ -283,7 +284,8 @@ namespace inonego.Xeri.UI.Frame
             }
             catch (Exception exception)
             {
-                var errors = new ExceptionBuffer(exception);
+                var errors = new ExceptionBuffer();
+                errors.Add(exception);
 
                 for (var index = (changedSessions?.Count ?? 0) - 1; index >= 0; index--)
                 {
@@ -372,15 +374,7 @@ namespace inonego.Xeri.UI.Frame
                 }
             }
 
-            if (errors.Count == 1)
-            {
-                throw errors[0];
-            }
-
-            if (errors.Count > 1)
-            {
-                throw errors.CreateAggregateException("Screen Stack 정책 적용이 실패했습니다.");
-            }
+            errors.ThrowWhenAny("Screen Stack 정책 적용이 실패했습니다.");
 
             // 완료 알림은 정책 적용의 rollback 원인이 아니다.
             var revision = ++stackRevision;
@@ -484,7 +478,7 @@ namespace inonego.Xeri.UI.Frame
 
             // 전체 정리 중 새 Screen 명령이 Live 목록을 변경하지 않도록 Controller를 일시적으로 닫는다.
             isReleasing = true;
-            IReadOnlyList<Exception> errors;
+            ExceptionBuffer errors;
 
             try
             {
@@ -497,7 +491,7 @@ namespace inonego.Xeri.UI.Frame
 
             if (errors.Count > 0)
             {
-                throw new AggregateException("Screen Clear 중 하나 이상의 정리가 실패했습니다.", errors);
+                throw errors.CreateAggregateException("Screen Clear 중 하나 이상의 정리가 실패했습니다.");
             }
         }
 
@@ -506,11 +500,11 @@ namespace inonego.Xeri.UI.Frame
         /// 공개 명령을 중지하고 모든 Screen Source 반환을 강제 완료한다.
         /// </summary>
         // ------------------------------------------------------------
-        internal IReadOnlyList<Exception> Shutdown()
+        internal ExceptionBuffer Shutdown()
         {
             var errors = new ExceptionBuffer();
 
-            if (isReleased || isReleasing) return errors.AsReadOnlyList();
+            if (isReleased || isReleasing) return errors;
 
             isReleasing = true;
             errors.AddRange(ForceClear());
@@ -518,7 +512,7 @@ namespace inonego.Xeri.UI.Frame
             isActive = false;
             isReleasing = false;
             isReleased = true;
-            return errors.AsReadOnlyList();
+            return errors;
         }
 
     #endregion
@@ -1484,7 +1478,7 @@ namespace inonego.Xeri.UI.Frame
         /// 모든 생존 Session을 최신 획득부터 즉시 강제 종료한다.
         /// </summary>
         // ------------------------------------------------------------
-        private IReadOnlyList<Exception> ForceClear()
+        private ExceptionBuffer ForceClear()
         {
             var errors = new ExceptionBuffer();
             var batchStarted = false;
@@ -1547,7 +1541,7 @@ namespace inonego.Xeri.UI.Frame
             }
 
             // Screen별 Focus 기록은 FinishClose에서 반환한다. Context의 독립 Scope는 유지한다.
-            return errors.AsReadOnlyList();
+            return errors;
         }
 
         // --------------------------------------------------------------------------------
@@ -2033,7 +2027,7 @@ namespace inonego.Xeri.UI.Frame
         {
             for (var index = 0; index < errors.Count; index++)
             {
-                Debug.LogException(errors[index]);
+                Debug.LogException(errors.Exceptions[index]);
             }
         }
 

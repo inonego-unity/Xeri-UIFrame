@@ -174,12 +174,7 @@ namespace inonego.Xeri.UI.Frame
 
             if (errors.Count == 0) return;
 
-            if (errors.Count == 1)
-            {
-                throw errors[0];
-            }
-
-            throw errors.CreateAggregateException
+            errors.ThrowWhenAny
             (
                 "UGUI Spotlight 숨김 처리 중 하나 이상의 정리가 실패했습니다."
             );

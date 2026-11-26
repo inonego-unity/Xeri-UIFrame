@@ -313,7 +313,7 @@ namespace inonego.Xeri.UI.Window
         /// Workspace 추적에 공개되기 전 실패한 provisional Session을 직접 Terminal 정리한다.
         /// </summary>
         // --------------------------------------------------------------------------------
-        internal IReadOnlyList<Exception> ReleaseUnaccepted
+        internal ExceptionBuffer ReleaseUnaccepted
         (
             XeriWindowContainer container,
             IXeriWindowRegistry registry
@@ -328,7 +328,7 @@ namespace inonego.Xeri.UI.Window
         /// Workspace 소유권을 종료하고 입력·표시·View 자원을 attempt-once로 반환한다.
         /// </summary>
         // ----------------------------------------------------------------------
-        internal IReadOnlyList<Exception> Release
+        internal ExceptionBuffer Release
         (
             XeriWindowContainer container,
             IXeriWindowRegistry registry
@@ -336,7 +336,7 @@ namespace inonego.Xeri.UI.Window
         {
             var errors = new ExceptionBuffer();
 
-            if (isReleased) return errors.AsReadOnlyList();
+            if (isReleased) return errors;
 
             isReleased = true;
             Unbind(ref errors);
@@ -403,7 +403,7 @@ namespace inonego.Xeri.UI.Window
                 }
             }
 
-            return errors.AsReadOnlyList();
+            return errors;
         }
 
     #endregion
@@ -474,7 +474,7 @@ namespace inonego.Xeri.UI.Window
         /// Application Window의 Child Context, Surface와 Registry를 역순 반환한다.
         /// </summary>
         // --------------------------------------------------------------------------------
-        private IReadOnlyList<Exception> ReleaseApplication()
+        private ExceptionBuffer ReleaseApplication()
         {
             var errors = new ExceptionBuffer();
             var context = childContext;
@@ -511,7 +511,7 @@ namespace inonego.Xeri.UI.Window
                 errors.Add(exception);
             }
 
-            return errors.AsReadOnlyList();
+            return errors;
         }
 
     #endregion

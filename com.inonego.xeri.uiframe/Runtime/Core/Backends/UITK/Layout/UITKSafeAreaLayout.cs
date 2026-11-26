@@ -292,12 +292,7 @@ namespace inonego.Xeri.UI.Frame
 
             if (errors.Count == 0) return;
 
-            if (errors.Count == 1)
-            {
-                throw errors[0];
-            }
-
-            throw errors.CreateAggregateException
+            errors.ThrowWhenAny
             (
                 "Safe Area Layout 변경 observer 처리 중 오류가 발생했습니다."
             );

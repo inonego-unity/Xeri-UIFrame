@@ -99,7 +99,8 @@ namespace inonego.Xeri.UI.Window
                 }
                 catch (Exception exception)
                 {
-                    var errors = new ExceptionBuffer(exception);
+                    var errors = new ExceptionBuffer();
+                    errors.Add(exception);
 
                     try
                     {
@@ -316,7 +317,8 @@ namespace inonego.Xeri.UI.Window
             }
             catch (Exception exception)
             {
-                var errors = new ExceptionBuffer(exception);
+                var errors = new ExceptionBuffer();
+                errors.Add(exception);
 
                 try
                 {
@@ -739,7 +741,8 @@ namespace inonego.Xeri.UI.Window
             }
             catch (Exception exception)
             {
-                var errors = new ExceptionBuffer(exception);
+                var errors = new ExceptionBuffer();
+                errors.Add(exception);
 
                 try
                 {
@@ -764,11 +767,7 @@ namespace inonego.Xeri.UI.Window
 
                             if (cleanupErrors.Count > 0)
                             {
-                                throw new AggregateException
-                                (
-                                    "미공개 Window Session 롤백이 실패했습니다.",
-                                    cleanupErrors
-                                );
+                                throw cleanupErrors.CreateAggregateException("미공개 Window Session 롤백이 실패했습니다.");
                             }
                         }
                     }

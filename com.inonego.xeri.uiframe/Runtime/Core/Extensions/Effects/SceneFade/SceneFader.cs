@@ -281,7 +281,8 @@ namespace inonego.Xeri.UI.Frame
             }
             catch (Exception exception)
             {
-                var errors = new ExceptionBuffer(exception);
+                var errors = new ExceptionBuffer();
+                errors.Add(exception);
 
                 if (acquiredDriver != null)
                 {
@@ -560,7 +561,8 @@ namespace inonego.Xeri.UI.Frame
         // --------------------------------------------------------------------------------
         private Exception RollbackToStable(Exception failure, FadeRequest request)
         {
-            var errors = new ExceptionBuffer(failure);
+            var errors = new ExceptionBuffer();
+            errors.Add(failure);
             var stableAlpha = stableState == SceneFadeState.Covered ? 1.0f : 0.0f;
 
             // 반환·복원 중 콜백이 재진입할 수 있으므로 논리 상태를 먼저 확정한다.
@@ -685,18 +687,10 @@ namespace inonego.Xeri.UI.Frame
                 }
             }
 
-            if (errors.Count == 1)
-            {
-                throw errors[0];
-            }
-
-            if (errors.Count > 1)
-            {
-                throw errors.CreateAggregateException
-                (
-                    "Scene Fade Presentation 반환이 실패했습니다."
-                );
-            }
+            errors.ThrowWhenAny
+            (
+                "Scene Fade Presentation 반환이 실패했습니다."
+            );
         }
 
         // ------------------------------------------------------------

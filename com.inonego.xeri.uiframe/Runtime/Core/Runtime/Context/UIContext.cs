@@ -310,7 +310,8 @@ namespace inonego.Xeri.UI.Frame
             }
             catch (Exception exception)
             {
-                var errors = new ExceptionBuffer(exception);
+                var errors = new ExceptionBuffer();
+                errors.Add(exception);
 
                 if (view != null)
                 {
@@ -414,7 +415,8 @@ namespace inonego.Xeri.UI.Frame
             }
             catch (Exception exception)
             {
-                var errors = new ExceptionBuffer(exception);
+                var errors = new ExceptionBuffer();
+                errors.Add(exception);
 
                 if (view != null)
                 {
@@ -639,15 +641,7 @@ namespace inonego.Xeri.UI.Frame
                 TryRestoreAuthority(() => Screens.SetInputContributionEnabled(false), ref errors);
                 TryRestoreAuthority(focusController.Suspend, ref errors);
 
-                if (errors.Count == 1)
-                {
-                    throw errors[0];
-                }
-
-                if (errors.Count > 1)
-                {
-                    throw errors.CreateAggregateException("UI Context authority 반환이 실패했습니다.");
-                }
+                errors.ThrowWhenAny("UI Context authority 반환이 실패했습니다.");
 
                 return;
             }
@@ -682,7 +676,8 @@ namespace inonego.Xeri.UI.Frame
             }
             catch (Exception exception)
             {
-                var errors = new ExceptionBuffer(exception);
+                var errors = new ExceptionBuffer();
+                errors.Add(exception);
 
                 TryRestoreAuthority
                 (
@@ -863,7 +858,7 @@ namespace inonego.Xeri.UI.Frame
         /// Runtime 종료에 맞춰 루트 상태를 반환한다.
         /// </summary>
         // ------------------------------------------------------------
-        internal IReadOnlyList<Exception> DisposeFromRuntime()
+        internal ExceptionBuffer DisposeFromRuntime()
         {
             return Release(restoreAuthority: false);
         }
@@ -873,7 +868,7 @@ namespace inonego.Xeri.UI.Frame
         /// 부모 종료에 맞춰 자식 상태를 반환한다.
         /// </summary>
         // ------------------------------------------------------------
-        private IReadOnlyList<Exception> DisposeFromParent()
+        private ExceptionBuffer DisposeFromParent()
         {
             return Release(restoreAuthority: true);
         }
@@ -883,11 +878,11 @@ namespace inonego.Xeri.UI.Frame
         /// 콘텐츠와 자식 상태를 반환하고 정리 실패를 모은다.
         /// </summary>
         // ------------------------------------------------------------
-        private IReadOnlyList<Exception> Release(bool restoreAuthority)
+        private ExceptionBuffer Release(bool restoreAuthority)
         {
             var errors = new ExceptionBuffer();
 
-            if (state != State.Active) return errors.AsReadOnlyList();
+            if (state != State.Active) return errors;
 
             state = State.Disposing;
 
@@ -944,7 +939,7 @@ namespace inonego.Xeri.UI.Frame
             DisposeScreenRegistry(ScreenRegistry, ref errors);
             parent = null;
             state = State.Disposed;
-            return errors.AsReadOnlyList();
+            return errors;
         }
 
         // ------------------------------------------------------------
@@ -1040,7 +1035,7 @@ namespace inonego.Xeri.UI.Frame
 
             if (errors.Count > 0)
             {
-                throw new AggregateException("UI Context 해제가 실패했습니다.", errors);
+                throw errors.CreateAggregateException("UI Context 해제가 실패했습니다.");
             }
         }
 

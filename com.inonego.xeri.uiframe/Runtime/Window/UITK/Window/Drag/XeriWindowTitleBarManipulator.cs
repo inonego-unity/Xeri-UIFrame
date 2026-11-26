@@ -101,7 +101,8 @@ namespace inonego.Xeri.UI.Window
             }
             catch (Exception exception)
             {
-                var errors = new ExceptionBuffer(exception);
+                var errors = new ExceptionBuffer();
+                errors.Add(exception);
                 UnregisterCallbacks(ref errors);
                 ResetTitleBarClickState();
                 ThrowErrors("Window titlebar callback 연결 rollback", errors);
@@ -195,12 +196,7 @@ namespace inonego.Xeri.UI.Window
         {
             if (errors.Count == 0) return;
 
-            if (errors.Count == 1)
-            {
-                throw errors[0];
-            }
-
-            throw errors.CreateAggregateException(message);
+            errors.ThrowWhenAny(message);
         }
 
     #endregion

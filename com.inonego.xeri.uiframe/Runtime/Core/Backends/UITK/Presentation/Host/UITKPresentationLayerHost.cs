@@ -169,12 +169,7 @@ namespace inonego.Xeri.UI.Frame
 
             if (errors.Count == 0) return;
 
-            if (errors.Count == 1)
-            {
-                throw errors[0];
-            }
-
-            throw errors.CreateAggregateException
+            errors.ThrowWhenAny
             (
                 $"UITK Layer Host '{LayerID}' borrowed state 복원이 실패했습니다."
             );
@@ -256,12 +251,7 @@ namespace inonego.Xeri.UI.Frame
                 errors.Add(cleanupException);
             }
 
-            if (errors.Count == 1)
-            {
-                throw errors[0];
-            }
-
-            throw errors.CreateAggregateException
+            errors.ThrowWhenAny
             (
                 "UITK Layer Host reference callback 등록과 롤백이 모두 실패했습니다."
             );
@@ -331,12 +321,7 @@ namespace inonego.Xeri.UI.Frame
 
             if (errors.Count == 0) return;
 
-            if (errors.Count == 1)
-            {
-                throw errors[0];
-            }
-
-            throw errors.CreateAggregateException
+            errors.ThrowWhenAny
             (
                 "UITK Layer Host reference callback 해제가 실패했습니다."
             );

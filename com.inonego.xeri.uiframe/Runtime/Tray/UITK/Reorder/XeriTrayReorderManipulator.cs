@@ -542,12 +542,7 @@ namespace inonego.Xeri.UI.Tray
         {
             if (errors.Count == 0) return;
 
-            if (errors.Count == 1)
-            {
-                throw errors[0];
-            }
-
-            throw errors.CreateAggregateException
+            errors.ThrowWhenAny
             (
                 $"{message} 중 하나 이상의 작업이 실패했습니다."
             );

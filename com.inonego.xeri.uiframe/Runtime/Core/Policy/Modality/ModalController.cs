@@ -306,7 +306,8 @@ namespace inonego.Xeri.UI.Frame
             }
             catch (Exception exception)
             {
-                var errors = new ExceptionBuffer(exception);
+                var errors = new ExceptionBuffer();
+                errors.Add(exception);
 
                 if (driverSetTopAttempted)
                 {

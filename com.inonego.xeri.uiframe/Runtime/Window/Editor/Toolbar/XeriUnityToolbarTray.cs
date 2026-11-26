@@ -208,7 +208,7 @@ namespace inonego.Xeri.UI.Window.Editor
             controller = null;
             source = null;
 
-            List<Exception> errors = null;
+            var errors = new ExceptionBuffer();
 
             if (trayPanel != null)
             {
@@ -218,7 +218,7 @@ namespace inonego.Xeri.UI.Window.Editor
                 }
                 catch (Exception exception)
                 {
-                    (errors ??= new List<Exception>()).Add(exception);
+                    errors.Add(exception);
                 }
             }
 
@@ -230,7 +230,7 @@ namespace inonego.Xeri.UI.Window.Editor
                 }
                 catch (Exception exception)
                 {
-                    (errors ??= new List<Exception>()).Add(exception);
+                    errors.Add(exception);
                 }
 
                 try
@@ -239,7 +239,7 @@ namespace inonego.Xeri.UI.Window.Editor
                 }
                 catch (Exception exception)
                 {
-                    (errors ??= new List<Exception>()).Add(exception);
+                    errors.Add(exception);
                 }
 
                 try
@@ -248,7 +248,7 @@ namespace inonego.Xeri.UI.Window.Editor
                 }
                 catch (Exception exception)
                 {
-                    (errors ??= new List<Exception>()).Add(exception);
+                    errors.Add(exception);
                 }
             }
 
@@ -260,21 +260,13 @@ namespace inonego.Xeri.UI.Window.Editor
                 }
                 catch (Exception exception)
                 {
-                    (errors ??= new List<Exception>()).Add(exception);
+                    errors.Add(exception);
                 }
             }
 
-            if ((errors?.Count ?? 0) == 0) return;
-
-            if ((errors?.Count ?? 0) == 1)
-            {
-                throw errors[0];
-            }
-
-            throw new AggregateException
+            errors.ThrowWhenAny
             (
-                "Unity Toolbar Tray binding 해제 중 하나 이상의 정리가 실패했습니다.",
-                errors
+                "Unity Toolbar Tray binding 해제 중 하나 이상의 정리가 실패했습니다."
             );
         }
 
@@ -390,7 +382,7 @@ namespace inonego.Xeri.UI.Window.Editor
             if (isDisposed) return;
 
             isDisposed = true;
-            List<Exception> errors = null;
+            var errors = new ExceptionBuffer();
 
             try
             {
@@ -398,7 +390,7 @@ namespace inonego.Xeri.UI.Window.Editor
             }
             catch (Exception exception)
             {
-                (errors ??= new List<Exception>()).Add(exception);
+                errors.Add(exception);
             }
 
             try
@@ -407,22 +399,14 @@ namespace inonego.Xeri.UI.Window.Editor
             }
             catch (Exception exception)
             {
-                (errors ??= new List<Exception>()).Add(exception);
+                errors.Add(exception);
             }
 
             trayPanel = null;
 
-            if ((errors?.Count ?? 0) == 0) return;
-
-            if ((errors?.Count ?? 0) == 1)
-            {
-                throw errors[0];
-            }
-
-            throw new AggregateException
+            errors.ThrowWhenAny
             (
-                "Unity Toolbar Tray 해제 중 하나 이상의 정리가 실패했습니다.",
-                errors
+                "Unity Toolbar Tray 해제 중 하나 이상의 정리가 실패했습니다."
             );
         }
 

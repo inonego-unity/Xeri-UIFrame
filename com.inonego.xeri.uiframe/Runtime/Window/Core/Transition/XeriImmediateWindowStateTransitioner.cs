@@ -190,12 +190,7 @@ namespace inonego.Xeri.UI.Window
 
             if (errors.Count == 0) return;
 
-            if (errors.Count == 1)
-            {
-                throw errors[0];
-            }
-
-            throw errors.CreateAggregateException
+            errors.ThrowWhenAny
             (
                 "Immediate Window 상태 전환 롤백 중 하나 이상의 복원이 실패했습니다."
             );

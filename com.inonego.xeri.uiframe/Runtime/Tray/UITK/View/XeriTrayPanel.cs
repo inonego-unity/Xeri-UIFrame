@@ -454,12 +454,7 @@ namespace inonego.Xeri.UI.Tray
 
             if (errors.Count == 0) return;
 
-            if (errors.Count == 1)
-            {
-                throw errors[0];
-            }
-
-            throw errors.CreateAggregateException
+            errors.ThrowWhenAny
             (
                 "Tray Panel 이벤트 처리 중 하나 이상의 observer가 실패했습니다."
             );

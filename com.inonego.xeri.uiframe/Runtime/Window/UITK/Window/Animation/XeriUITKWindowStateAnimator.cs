@@ -496,12 +496,7 @@ namespace inonego.Xeri.UI.Window
         {
             if (errors.Count == 0) return;
 
-            if (errors.Count == 1)
-            {
-                throw errors[0];
-            }
-
-            throw errors.CreateAggregateException(message);
+            errors.ThrowWhenAny(message);
         }
 
     #endregion

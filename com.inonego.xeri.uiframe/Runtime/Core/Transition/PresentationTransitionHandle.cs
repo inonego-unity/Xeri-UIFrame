@@ -163,15 +163,7 @@ namespace inonego.Xeri.UI.Frame
                 }
             }
 
-            if (errors.Count == 1)
-            {
-                throw errors[0];
-            }
-
-            if (errors.Count > 1)
-            {
-                throw errors.CreateAggregateException("Presentation Transition 취소와 알림이 실패했습니다.");
-            }
+            errors.ThrowWhenAny("Presentation Transition 취소와 알림이 실패했습니다.");
         }
 
     #endregion

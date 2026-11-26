@@ -273,12 +273,7 @@ namespace inonego.Xeri.UI.Frame
 
             if (errors.Count == 0) return;
 
-            if (errors.Count == 1)
-            {
-                throw errors[0];
-            }
-
-            throw errors.CreateAggregateException
+            errors.ThrowWhenAny
             (
                 "UI Runtime Context authority 갱신 중 하나 이상의 적용이 실패했습니다."
             );

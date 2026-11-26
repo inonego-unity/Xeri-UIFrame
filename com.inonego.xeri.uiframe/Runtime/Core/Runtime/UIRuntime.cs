@@ -902,7 +902,7 @@ namespace inonego.Xeri.UI.Frame
 
             if (errors.Count > 0)
             {
-                throw new AggregateException("UI Runtime 종료 중 하나 이상의 정리가 실패했습니다.", errors);
+                throw errors.CreateAggregateException("UI Runtime 종료 중 하나 이상의 정리가 실패했습니다.");
             }
         }
 
@@ -917,9 +917,9 @@ namespace inonego.Xeri.UI.Frame
 
             for (var i = 0; i < errors.Count; i++)
             {
-                if (errors[i] != null)
+                if (errors.Exceptions[i] != null)
                 {
-                    Debug.LogException(errors[i], this);
+                    Debug.LogException(errors.Exceptions[i], this);
                 }
             }
         }
@@ -929,11 +929,11 @@ namespace inonego.Xeri.UI.Frame
         /// 현재까지 생성된 Runtime 소유 리소스를 해제하고 오류를 수집한다.
         /// </summary>
         // ------------------------------------------------------------
-        private IReadOnlyList<Exception> Release(bool invokeReleasingEvent)
+        private ExceptionBuffer Release(bool invokeReleasingEvent)
         {
             var errors = new ExceptionBuffer();
 
-            if (IsReleasing) return errors.AsReadOnlyList();
+            if (IsReleasing) return errors;
 
             if (IsReleased)
             {
@@ -947,7 +947,7 @@ namespace inonego.Xeri.UI.Frame
                     }
                 }
 
-                return errors.AsReadOnlyList();
+                return errors;
             }
 
             state = State.Releasing;
@@ -1025,7 +1025,7 @@ namespace inonego.Xeri.UI.Frame
             }
 
             state = State.Released;
-            return errors.AsReadOnlyList();
+            return errors;
         }
 
     #endregion
@@ -1070,12 +1070,7 @@ namespace inonego.Xeri.UI.Frame
 
             if (errors.Count == 0) return;
 
-            if (errors.Count == 1)
-            {
-                throw errors[0];
-            }
-
-            throw errors.CreateAggregateException
+            errors.ThrowWhenAny
             (
                 "UI Runtime 초기화 observer 처리 중 오류가 발생했습니다."
             );

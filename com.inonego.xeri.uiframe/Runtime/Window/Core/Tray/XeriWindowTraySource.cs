@@ -337,12 +337,7 @@ namespace inonego.Xeri.UI.Window
 
             if (errors.Count == 0) return;
 
-            if (errors.Count == 1)
-            {
-                throw errors[0];
-            }
-
-            throw errors.CreateAggregateException
+            errors.ThrowWhenAny
             (
                 "Window Tray reload 이벤트 처리 중 오류가 발생했습니다."
             );

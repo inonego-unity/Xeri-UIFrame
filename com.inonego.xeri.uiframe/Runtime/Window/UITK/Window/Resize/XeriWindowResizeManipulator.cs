@@ -191,7 +191,8 @@ namespace inonego.Xeri.UI.Window
             }
             catch (Exception exception)
             {
-                var errors = new ExceptionBuffer(exception);
+                var errors = new ExceptionBuffer();
+                errors.Add(exception);
                 UnregisterAllHandles(ref errors);
                 TryCleanup(cursorProvider.Reset, ref errors);
 
@@ -372,12 +373,7 @@ namespace inonego.Xeri.UI.Window
         {
             if (errors.Count == 0) return;
 
-            if (errors.Count == 1)
-            {
-                throw errors[0];
-            }
-
-            throw errors.CreateAggregateException(message);
+            errors.ThrowWhenAny(message);
         }
 
     #endregion
@@ -603,7 +599,8 @@ namespace inonego.Xeri.UI.Window
             }
             catch (Exception exception)
             {
-                var errors = new ExceptionBuffer(exception);
+                var errors = new ExceptionBuffer();
+                errors.Add(exception);
 
                 try
                 {
@@ -654,7 +651,8 @@ namespace inonego.Xeri.UI.Window
             }
             catch (Exception exception)
             {
-                var errors = new ExceptionBuffer(exception);
+                var errors = new ExceptionBuffer();
+                errors.Add(exception);
 
                 try
                 {

@@ -197,7 +197,7 @@ namespace inonego.Xeri.UI.Window.Editor
             if (isDisposed) return;
 
             isDisposed = true;
-            List<Exception> errors = null;
+            var errors = new ExceptionBuffer();
 
             try
             {
@@ -205,7 +205,7 @@ namespace inonego.Xeri.UI.Window.Editor
             }
             catch (Exception exception)
             {
-                (errors ??= new List<Exception>()).Add(exception);
+                errors.Add(exception);
             }
 
             try
@@ -214,7 +214,7 @@ namespace inonego.Xeri.UI.Window.Editor
             }
             catch (Exception exception)
             {
-                (errors ??= new List<Exception>()).Add(exception);
+                errors.Add(exception);
             }
 
             try
@@ -223,7 +223,7 @@ namespace inonego.Xeri.UI.Window.Editor
             }
             catch (Exception exception)
             {
-                (errors ??= new List<Exception>()).Add(exception);
+                errors.Add(exception);
             }
 
             try
@@ -232,7 +232,7 @@ namespace inonego.Xeri.UI.Window.Editor
             }
             catch (Exception exception)
             {
-                (errors ??= new List<Exception>()).Add(exception);
+                errors.Add(exception);
             }
 
             try
@@ -241,7 +241,7 @@ namespace inonego.Xeri.UI.Window.Editor
             }
             catch (Exception exception)
             {
-                (errors ??= new List<Exception>()).Add(exception);
+                errors.Add(exception);
             }
 
             try
@@ -250,20 +250,12 @@ namespace inonego.Xeri.UI.Window.Editor
             }
             catch (Exception exception)
             {
-                (errors ??= new List<Exception>()).Add(exception);
+                errors.Add(exception);
             }
 
-            if ((errors?.Count ?? 0) == 0) return;
-
-            if ((errors?.Count ?? 0) == 1)
-            {
-                throw errors[0];
-            }
-
-            throw new AggregateException
+            errors.ThrowWhenAny
             (
-                "EditorWindow Tray Toolbar 해제 중 하나 이상의 정리가 실패했습니다.",
-                errors
+                "EditorWindow Tray Toolbar 해제 중 하나 이상의 정리가 실패했습니다."
             );
         }
 

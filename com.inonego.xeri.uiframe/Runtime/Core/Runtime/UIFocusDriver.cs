@@ -225,7 +225,8 @@ namespace inonego.Xeri.UI.Frame
             }
             catch (Exception exception)
             {
-                var errors = new ExceptionBuffer(exception);
+                var errors = new ExceptionBuffer();
+                errors.Add(exception);
 
                 for (var index = handles.Count - 1; index >= 0; index--)
                 {
@@ -451,7 +452,8 @@ namespace inonego.Xeri.UI.Frame
             }
             catch (Exception exception)
             {
-                var errors = new ExceptionBuffer(exception);
+                var errors = new ExceptionBuffer();
+                errors.Add(exception);
 
                 // 실패한 선택과 같은 Native 알림은 새로운 선택 요청이 아니다.
                 if
@@ -663,12 +665,7 @@ namespace inonego.Xeri.UI.Frame
         {
             if (errors.Count == 0) return;
 
-            if (errors.Count == 1)
-            {
-                throw errors[0];
-            }
-
-            throw errors.CreateAggregateException(message);
+            errors.ThrowWhenAny(message);
         }
 
         // ------------------------------------------------------------

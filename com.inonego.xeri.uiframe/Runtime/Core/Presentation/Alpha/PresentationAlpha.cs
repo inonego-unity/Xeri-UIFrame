@@ -743,7 +743,7 @@ namespace inonego.Xeri.UI.Frame
 
             if (errors.Count == 1)
             {
-                System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(errors[0]).Throw();
+                System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(errors.Exceptions[0]).Throw();
             }
 
             throw errors.CreateAggregateException("Presentation 값 갱신과 후속 처리가 실패했습니다.");

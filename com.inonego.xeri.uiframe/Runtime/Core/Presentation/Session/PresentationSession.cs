@@ -537,7 +537,8 @@ namespace inonego.Xeri.UI.Frame
             }
             catch (Exception exception)
             {
-                var errors = new ExceptionBuffer(exception);
+                var errors = new ExceptionBuffer();
+                errors.Add(exception);
                 TryDispose(runtime.FocusBinding, ref errors);
                 TryDispose(runtime.Handle, ref errors);
                 TryAction(releaseMaterialization, ref errors);

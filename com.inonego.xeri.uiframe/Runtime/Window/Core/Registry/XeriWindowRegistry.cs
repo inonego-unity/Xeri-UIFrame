@@ -265,7 +265,7 @@ namespace inonego.Xeri.UI.Window
             // Observer 실패는 이미 공개된 등록을 취소하지 않는다.
             for (var index = 0; index < errors.Count; index++)
             {
-                Debug.LogException(errors[index]);
+                Debug.LogException(errors.Exceptions[index]);
             }
 
             if (!HasRegistrationOwnership(id, entry))
@@ -763,12 +763,7 @@ namespace inonego.Xeri.UI.Window
         {
             if (errors.Count == 0) return;
 
-            if (errors.Count == 1)
-            {
-                throw errors[0];
-            }
-
-            throw errors.CreateAggregateException(message);
+            errors.ThrowWhenAny(message);
         }
 
     #endregion

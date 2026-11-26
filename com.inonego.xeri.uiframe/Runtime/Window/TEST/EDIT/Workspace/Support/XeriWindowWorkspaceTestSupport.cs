@@ -794,11 +794,7 @@ namespace inonego.Xeri.UI.TEST.Window
 
                 if (errors.Count > 0)
                 {
-                    throw new AggregateException
-                    (
-                        "Workspace 테스트 Root Context 정리가 실패했습니다.",
-                        errors
-                    );
+                    throw errors.CreateAggregateException("Workspace 테스트 Root Context 정리가 실패했습니다.");
                 }
             }
 

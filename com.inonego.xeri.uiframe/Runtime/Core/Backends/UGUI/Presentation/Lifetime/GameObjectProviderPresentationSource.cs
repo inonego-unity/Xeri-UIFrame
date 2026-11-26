@@ -145,12 +145,7 @@ namespace inonego.Xeri.UI.Frame
                     }
                 }
 
-                if (acquisitionErrors.Count == 1)
-                {
-                    throw acquisitionErrors[0];
-                }
-
-                throw acquisitionErrors.CreateAggregateException
+                acquisitionErrors.ThrowWhenAny
                 (
                     "Presentation View 획득과 Provider Parent 복원이 실패했습니다."
                 );

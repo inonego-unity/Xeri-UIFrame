@@ -259,7 +259,8 @@ namespace inonego.Xeri.UI.Frame
             catch (Exception exception)
             {
                 applyPending = false;
-                var errors = new ExceptionBuffer(exception);
+                var errors = new ExceptionBuffer();
+                errors.Add(exception);
 
                 for (var i = 0; i < readySessions.Count; i++)
                 {
@@ -288,7 +289,7 @@ namespace inonego.Xeri.UI.Frame
                 );
             }
 
-            List<Exception> releaseErrors = null;
+            var releaseErrors = new ExceptionBuffer();
 
             for (var i = 0; i < readySessions.Count; i++)
             {
@@ -302,19 +303,11 @@ namespace inonego.Xeri.UI.Frame
                 }
                 catch (Exception exception)
                 {
-                    releaseErrors ??= new List<Exception>();
                     releaseErrors.Add(exception);
                 }
             }
 
-            if (releaseErrors != null)
-            {
-                throw new AggregateException
-                (
-                    "입력 해제 완료 callback 중 하나 이상이 실패했습니다.",
-                    releaseErrors
-                );
-            }
+            releaseErrors.ThrowWhenAny("입력 해제 완료 callback 중 하나 이상이 실패했습니다.");
         }
 
         // ----------------------------------------------------------------------
@@ -470,7 +463,7 @@ namespace inonego.Xeri.UI.Frame
 
             if (errors.Count > 0)
             {
-                throw new AggregateException("입력 정책 전체 해제가 실패했습니다.", errors);
+                throw errors.CreateAggregateException("입력 정책 전체 해제가 실패했습니다.");
             }
         }
 
@@ -761,7 +754,7 @@ namespace inonego.Xeri.UI.Frame
         /// 입력 Session 소유권을 분리하고 역순으로 종결한다.
         /// </summary>
         // ------------------------------------------------------------
-        private IReadOnlyList<Exception> ReleaseAllSessions()
+        private ExceptionBuffer ReleaseAllSessions()
         {
             // Dispose뿐 아니라 ForceReleaseAll도 진행 중인 정책 적용의 세대를 종료한다.
             unchecked
@@ -816,7 +809,7 @@ namespace inonego.Xeri.UI.Frame
                 }
             }
 
-            return errors.AsReadOnlyList();
+            return errors;
         }
 
         // ------------------------------------------------------------
@@ -1001,12 +994,7 @@ namespace inonego.Xeri.UI.Frame
 
             if (errors.Count == 0) return;
 
-            if (errors.Count == 1)
-            {
-                throw errors[0];
-            }
-
-            throw errors.CreateAggregateException
+            errors.ThrowWhenAny
             (
                 "Input baseline 상태 복원 중 하나 이상의 적용이 실패했습니다."
             );
@@ -1132,12 +1120,7 @@ namespace inonego.Xeri.UI.Frame
 
             if (errors.Count == 0) return;
 
-            if (errors.Count == 1)
-            {
-                throw errors[0];
-            }
-
-            throw errors.CreateAggregateException
+            errors.ThrowWhenAny
             (
                 $"Input Action Map '{map.name}' 상태 복원 중 하나 이상의 Action 적용이 실패했습니다."
             );
@@ -1250,17 +1233,12 @@ namespace inonego.Xeri.UI.Frame
                 }
             }
 
-            if (errors.Count == 0) return !superseded;
-
-            if (errors.Count == 1)
-            {
-                throw errors[0];
-            }
-
-            throw errors.CreateAggregateException
+            errors.ThrowWhenAny
             (
                 "Screen 입력 정책 적용 중 하나 이상의 backend 변경이 실패했습니다."
             );
+
+            return !superseded;
         }
 
         // ------------------------------------------------------------
